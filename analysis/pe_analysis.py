@@ -143,9 +143,13 @@ def figure(ev, cats, cal, out):
         ax[2].plot(x, (np.arange(len(x)) + 1) / len(x), color=c, ls=':', drawstyle='steps-post', label=f'{scen} ln $D_A$')
     ax[1].plot(rr, np.sqrt(cal['a'] ** 2 + (cal['b'] ** 2 - 1) / rr ** 2), color='k', lw=1, ls='--', label='GWTC calibration')
     ax[2].plot([0, 1], [0, 1], color='grey', lw=0.8)
+    fmt = matplotlib.ticker.FuncFormatter(lambda v, _: f'{v:g}')
     for a in ax[:2]:
         a.set_xscale('log')
         a.set_yscale('log')
+        for axis in (a.xaxis, a.yaxis):
+            axis.set_major_formatter(fmt)
+            axis.set_minor_formatter(matplotlib.ticker.NullFormatter())
         a.set_xlabel(r'joint SNR $\rho_J$')
     ax[0].set_ylabel(r'$\sigma[\ln(\mu_B/\mu_A)]$')
     ax[1].set_ylabel(r'$\sigma[\ln D_A]$')
