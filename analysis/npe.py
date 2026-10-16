@@ -59,6 +59,15 @@ def train_flow(x, y, xv, yv, device, epochs, seed):
 
 
 @torch.no_grad()
+def load_flow(path, device='cpu'):
+    """Load a saved flow checkpoint written by this script."""
+    ck = torch.load(path, weights_only=False, map_location=device)
+    flow = zuko.flows.NSF(**ck['arch']).to(device)
+    flow.load_state_dict(ck['state'])
+    flow.eval()
+    return flow, ck
+
+
 def posterior_samples(flow, x, device, n=1000):
     out = []
     X = torch.tensor(x, dtype=torch.float32, device=device)
@@ -95,6 +104,9 @@ def main():
     xte, _, _ = standardise(te[cols].to_numpy(float), m, s)
     t0 = time.time()
     flow, val_nll = train_flow(xtr, np.log(tr.mu.to_numpy()), xva, np.log(va.mu.to_numpy()), a.device, a.epochs, a.seed)
+    torch.save(dict(state=flow.state_dict(), cols=cols, mean=m, std=s, input_set=a.input_set, scenario=a.scenario,
+                    arch=dict(features=1, context=len(cols), transforms=4, hidden_features=[256, 256, 256], bins=12),
+                    qconf=None), a.out_dir / f'flow_{a.scenario}_{a.input_set.replace("+", "_").replace("(", "").replace(")", "")}.pt')
     samples = posterior_samples(flow, xte, a.device)
     y = np.log(te.mu.to_numpy())
     # Conformal recalibration (per family) of the central 90 per cent posterior interval.
@@ -107,6 +119,10 @@ def main():
         v = np.sort(sc[ca.family.to_numpy() == fam])
         k = int(np.ceil((len(v) + 1) * 0.9))
         qconf[fam] = float(v[min(k, len(v)) - 1])
+    ck = a.out_dir / f'flow_{a.scenario}_{a.input_set.replace("+", "_").replace("(", "").replace(")", "")}.pt'
+    saved = torch.load(ck, weights_only=False)
+    saved['qconf'] = qconf
+    torch.save(saved, ck)
     pit = (samples < y[:, None]).mean(1)
     med = np.exp(np.median(samples, 1))
     rows = []

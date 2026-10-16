@@ -133,6 +133,8 @@ def simulate_system(rng, family, scenarios, cal):
     row = dict(family=family, true_z_s=zs, true_z_l=zl, true_sigma_v=sig, true_theta_e=te, true_y=sol['y_offset'],
                true_q=shape['q'], true_gamma=shape['gamma'], true_gamma_ext=shape['gamma_ext'], true_dl=dl,
                true_m1=float(m1[0]), true_m2=float(m2[0]), true_n_images=len(img['mu']),
+               true_chi1z=float(c1[0]), true_chi2z=float(c2[0]), true_ra=float(src['ra']), true_dec=float(src['dec']),
+               true_psi=float(src['psi']), true_cos_iota=float(src['cosi']), true_t0=float(src['t0']),
                obs_z_s=zs + rng.normal(0, OBS['sigma_z'] * (1 + zs)), obs_z_l=zl + rng.normal(0, OBS['sigma_z'] * (1 + zl)),
                obs_sigma_v=sig * (1 + rng.normal(0, OBS['sigma_vdisp'])), obs_q_light=q_light, obs_pa_light=pa_light)
     for s in scenarios:
@@ -155,6 +157,8 @@ def simulate_system(rng, family, scenarios, cal):
             f'{s}__geo_r_other2': r_other[1] if len(r_other) > 1 else np.nan,
             f'{s}__true_kappa_a': float(img['kappa'][a_i]), f'{s}__true_kappa_b': float(img['kappa'][b_i]),
             f'{s}__true_dt_ab': float(t[b_i] - t[a_i]),
+            f'{s}__true_t_a': float(t[a_i]),
+            f'{s}__true_mu_signed_a': float(img['mu'][a_i]), f'{s}__true_mu_signed_b': float(img['mu'][b_i]),
         })
     return row
 
