@@ -4,7 +4,7 @@ import pandas as pd
 from common import *
 
 def run(a,out):
- d,_=load_sis(a.sis_root);contracts=sis_contracts(d)
+ d,_=load_sis(a.sis_root);contracts=sis_contracts(d,getattr(a,'leaky_geometry',False))
  save_json({'features':contracts,'target':'log(mu0-1)','splits':'70/15/15 by event identity','estimator':'identical HistGB settings; no raw waveform inference','forbidden':'simulation distance, injected SNR and all true/latent fields','new_geometry_followup_features':len(contracts['geometry_followup'])},out/'contracts.json')
  rows=[];preds=[];pairs=[];splits=[]
  for splitseed in a.split_seeds:

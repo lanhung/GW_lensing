@@ -1,0 +1,12 @@
+# Generated data and results (regenerate with the documented commands)
+data/
+results/
+figures/
+logs/
+reproduced/
+realdata/o4a_cache/
+realdata/outputs_smoke/
+# Manuscript sources are kept outside the public repository
+paper/
+__pycache__/
+*.pyc

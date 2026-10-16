@@ -10,7 +10,7 @@ from sklearn.pipeline import make_pipeline
 ROOT=Path(__file__).resolve().parents[1]
 OLD=ROOT/'experiments/extended_experiments'
 sys.path.insert(0,str(ROOT));sys.path.insert(0,str(OLD))
-from evaluate_universal_identifiability import GEOMETRY, FOLLOWUP, FAMILIES, load_benchmark, conformal_quantile
+from evaluate_universal_identifiability import GEOMETRY, LEAKY_ABSOLUTE_GEOMETRY, FOLLOWUP, FAMILIES, load_benchmark, conformal_quantile
 from experiments.mu0_extension_tools import WAVE_PROXY_COLS
 
 
@@ -22,7 +22,7 @@ def save_json(obj,path):
 def stable_seed(*parts):return int.from_bytes(hashlib.sha256(':'.join(map(str,parts)).encode()).digest()[:4],'little')
 
 def audit(cols,frame):
- bad=[c for c in cols if not c.startswith(('obs__','norm__')) or any(s in c.lower() for s in ['true','latent','source_luminosity_distance','snr_pair','snr_1','snr_2','mu0','mu1','detA','jacobian'])]
+ bad=[c for c in cols if not c.startswith(('obs__','norm__','rel__')) or any(s in c.lower() for s in ['true','latent','source_luminosity_distance','snr_pair','snr_1','snr_2','mu0','mu1','detA','jacobian'])]
  if bad:raise ValueError(f'Forbidden model input: {bad}')
  missing=set(cols)-set(frame)
  if missing:raise ValueError(f'Missing required features: {sorted(missing)}')
@@ -38,12 +38,36 @@ def load_sis(root):
  frame=lens[['event_id','mu_0','y']].rename(columns={'mu_0':'mu0_true','y':'y_true'}).merge(obs.rename(columns={c:'obs__'+c for c in obs if c!='event_id'}),on='event_id',validate='one_to_one')
  frame['identity_key']=frame.event_id.astype(str);frame['event_key']='SIS:'+frame.identity_key;frame['lens_family']='SIS'
  params=params.set_index('event_id').loc[frame.event_id].reset_index()
- return frame,params
+ return add_relative_geometry(frame),params
 
 
-def sis_contracts(d):
+# The generators place the true lens centre at the coordinate origin. Absolute image
+# coordinates therefore reveal the exact centre, which no observation provides.
+# Leak-free geometry uses only quantities measured relative to the observed centre
+# or to the other image, and is invariant under translation of the coordinate frame.
+RELATIVE_GEOMETRY=['obs__image_separation_observed','obs__theta_plus_abs_observed','obs__theta_minus_abs_observed',
+ 'obs__image_position_asymmetry_observed','rel__dx_01','rel__dy_01','rel__mid_dx','rel__mid_dy','rel__pair_distance','rel__mid_offset','rel__cos_mid_pair']
+
+
+def add_relative_geometry(d):
+ """Translation-invariant image geometry from observed positions and the observed lens centre."""
+ out=d.copy()
+ need=[f'obs__{k}' for k in ['image_x_0_observed','image_y_0_observed','image_x_1_observed','image_y_1_observed','lens_center_x_observed','lens_center_y_observed']]
+ if not set(need)<=set(out):return out
+ g=lambda c:out[f'obs__{c}'].to_numpy(float)
+ dx=g('image_x_0_observed')-g('image_x_1_observed');dy=g('image_y_0_observed')-g('image_y_1_observed')
+ mx=.5*(g('image_x_0_observed')+g('image_x_1_observed'))-g('lens_center_x_observed')
+ my=.5*(g('image_y_0_observed')+g('image_y_1_observed'))-g('lens_center_y_observed')
+ out['rel__dx_01']=dx;out['rel__dy_01']=dy;out['rel__mid_dx']=mx;out['rel__mid_dy']=my
+ out['rel__pair_distance']=np.hypot(dx,dy);out['rel__mid_offset']=np.hypot(mx,my)
+ out['rel__cos_mid_pair']=(dx*mx+dy*my)/np.maximum(out.rel__pair_distance*out.rel__mid_offset,1e-12)
+ return out
+
+
+def sis_contracts(d,leaky_geometry=False):
+ """Observed input sets. leaky_geometry=True reproduces the superseded absolute-coordinate set."""
  follow=FOLLOWUP+['obs__log1p_z_s_observed','obs__log1p_z_l_observed']
- g=GEOMETRY;scale=['obs__theta_E_observed']
+ g=LEAKY_ABSOLUTE_GEOMETRY if leaky_geometry else RELATIVE_GEOMETRY;scale=['obs__theta_E_observed']
  return {name:audit(c,d) for name,c in {'gw_proxies':WAVE_PROXY_COLS,'gw_followup':WAVE_PROXY_COLS+follow,'geometry':g,'geometry_followup':g+follow+scale,'full_observed':WAVE_PROXY_COLS+follow+g+scale}.items()}
 
 

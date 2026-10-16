@@ -1,0 +1,17 @@
+{
+  "n_events": 167,
+  "catalogs": [
+    "GWTC-1-confident",
+    "GWTC-2.1-confident",
+    "GWTC-3-confident",
+    "GWTC-4.0"
+  ],
+  "form": "sigma_lnD = sqrt(a^2 + (b/rho)^2)",
+  "a": 0.22336116927799185,
+  "b": 2.74474387635714,
+  "a_err": 0.012951187249580403,
+  "b_err": 0.11878731811572313,
+  "residual_rms": 0.05738390183321499,
+  "median_sigma_lnD": 0.33971443271696183,
+  "median_snr": 10.7
+}
