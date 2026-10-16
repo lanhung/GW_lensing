@@ -162,10 +162,14 @@ def priors_for(truth):
     return pr
 
 
-def run_event(row, scenario, outdir, seed, nlive, npool, naccept):
+def gw_likelihood(row, scenario, seed):
+    """Inject both images of a catalogue row into simulated noise; return the joint likelihood.
+
+    Returns (likelihood, base, truth, duration, snrs), where base holds the injection parameters
+    of image A and truth the true joint parameters (see event_parameters).
+    """
     import bilby
     from bilby.gw.conversion import convert_to_lal_binary_black_hole_parameters
-    t0 = time.time()
     base, truth = event_parameters(row, scenario)
     duration = segment_duration(base['mass_1'], base['mass_2'], SCENARIO_FMIN[scenario])
     wf_args = dict(waveform_approximant=APPROXIMANT, reference_frequency=F_REF, minimum_frequency=SCENARIO_FMIN[scenario])
@@ -189,7 +193,13 @@ def run_event(row, scenario, outdir, seed, nlive, npool, naccept):
         fid = dict(inj, chirp_mass=truth['chirp_mass'], mass_ratio=truth['mass_ratio'])
         likes.append(bilby.gw.likelihood.RelativeBinningGravitationalWaveTransient(
             interferometers=ifos, waveform_generator=gen, fiducial_parameters=fid, epsilon=0.025))
-    like = JointLensedLikelihood(*likes)
+    return JointLensedLikelihood(*likes), base, truth, duration, snrs
+
+
+def run_event(row, scenario, outdir, seed, nlive, npool, naccept):
+    import bilby
+    t0 = time.time()
+    like, base, truth, duration, snrs = gw_likelihood(row, scenario, seed)
     priors = priors_for(truth)
     label = f'{scenario}_{row.event_id}'
     res = bilby.run_sampler(likelihood=like, priors=priors, sampler='dynesty', nlive=nlive, sample='acceptance-walk',

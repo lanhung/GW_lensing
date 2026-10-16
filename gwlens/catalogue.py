@@ -94,8 +94,14 @@ def _gw_block(rng, scen, src, img, cal_a, cal_b):
     return out, (a_i, b_i)
 
 
-def simulate_system(rng, family, scenarios, cal):
-    """One lens system: source, lens, images, GW and EM observables (all scenarios)."""
+def simulate_system(rng, family, scenarios, cal, full=False):
+    """One lens system: source, lens, images, GW and EM observables (all scenarios).
+
+    With ``full=True`` the row also carries an ``em`` dictionary with every image (observed
+    positions relative to the observed light centre, true magnifications and Morse indices) and
+    the true lens parameters in the observed frame, as needed by gwlens.joint_gwem. This does not
+    consume random numbers, so replaying a chunk reproduces the stored catalogue exactly.
+    """
     while True:
         zs = float(pop.sample_lensed_source_redshift(rng, 1)[0])
         zl = float(pop.sample_lens_redshift(rng, [zs])[0])
@@ -137,12 +143,25 @@ def simulate_system(rng, family, scenarios, cal):
                true_psi=float(src['psi']), true_cos_iota=float(src['cosi']), true_t0=float(src['t0']),
                obs_z_s=zs + rng.normal(0, OBS['sigma_z'] * (1 + zs)), obs_z_l=zl + rng.normal(0, OBS['sigma_z'] * (1 + zl)),
                obs_sigma_v=sig * (1 + rng.normal(0, OBS['sigma_vdisp'])), obs_q_light=q_light, obs_pa_light=pa_light)
+    if full:
+        e = (1 - shape['q']) / (1 + shape['q'])
+        bxr, byr = cx + cr * sol['beta_x'] - sr * sol['beta_y'], cy + sr * sol['beta_x'] + cr * sol['beta_y']
+        row['em'] = dict(x=(xo - cxo).tolist(), y=(yo - cyo).tolist(), mu=img['mu'].tolist(), morse=img['morse'].tolist(),
+                         t=np.asarray(t).tolist(), bright=(np.abs(img['mu']) >= OBS['min_em_mu']).tolist(),
+                         lens=dict(theta_E=te, gamma=shape['gamma'], e1=e * np.cos(2 * (shape['phi_q'] + rot)),
+                                   e2=e * np.sin(2 * (shape['phi_q'] + rot)), center_x=cx - cxo, center_y=cy - cyo,
+                                   gamma1=shape['gamma_ext'] * np.cos(2 * (shape['phi_ext'] + rot)),
+                                   gamma2=shape['gamma_ext'] * np.sin(2 * (shape['phi_ext'] + rot)),
+                                   beta_x=bxr - cxo, beta_y=byr - cyo, q=shape['q']),
+                         obs=dict(OBS), pairs={})
     for s in scenarios:
         gw, pair = _gw_block(rng, s, src, img, *cal)
         row.update(gw)
         if pair is None:
             continue
         a_i, b_i = pair
+        if full:
+            row['em']['pairs'][s] = (int(a_i), int(b_i))
         sep = float(np.hypot(xo[a_i] - xo[b_i], yo[a_i] - yo[b_i]))
         bright = np.abs(img['mu']) >= OBS['min_em_mu']
         resolved = sep >= OBS['min_separation']
@@ -160,6 +179,26 @@ def simulate_system(rng, family, scenarios, cal):
             f'{s}__true_t_a': float(t[a_i]),
             f'{s}__true_mu_signed_a': float(img['mu'][a_i]), f'{s}__true_mu_signed_b': float(img['mu'][b_i]),
         })
+    return row
+
+
+def replay(catalogue, event_id, chunk=None):
+    """Regenerate one catalogue row with the full EM record (see simulate_system)."""
+    catalogue = Path(catalogue)
+    meta = json.loads(catalogue.with_suffix('.json').read_text())
+    chunk = chunk or meta.get('chunk', 200)
+    family, i = meta['family'], int(event_id.rsplit('-', 1)[1])
+    n_chunks = int(np.ceil(meta['n_systems'] / chunk))
+    seed = np.random.SeedSequence([meta['seed'], lenses.FAMILIES.index(family)]).generate_state(n_chunks)[i // chunk]
+    rng = np.random.default_rng(int(seed))
+    cal = calibration()
+    for _ in range(i % chunk + 1):
+        row = simulate_system(rng, family, tuple(meta['scenarios']), cal, full=True)
+    stored = pd.read_parquet(catalogue, filters=[('event_id', '==', event_id)]).iloc[0]
+    for k in ('true_z_s', 'true_m1', 'true_ra', 'true_t0'):
+        if not np.isclose(row[k], stored[k], rtol=0, atol=1e-12):
+            raise RuntimeError(f'replay of {event_id} does not reproduce {k}; wrong chunk size?')
+    row['event_id'] = event_id
     return row
 
 
@@ -192,7 +231,7 @@ def main():
     df = pd.DataFrame(rows)
     df.insert(0, 'event_id', [f'{a.family}-{a.seed}-{i:07d}' for i in range(len(df))])
     df.to_parquet(a.out, index=False)
-    meta = dict(family=a.family, scenarios=a.scenarios, n_systems=len(df), seed=a.seed, seconds=time.time() - t0,
+    meta = dict(family=a.family, scenarios=a.scenarios, n_systems=len(df), seed=a.seed, chunk=a.chunk, seconds=time.time() - t0,
                 observation_model=OBS, distance_error_calibration=json.loads(CAL_PATH.read_text()),
                 selected={s: int(df[f'{s}__selected'].sum()) for s in a.scenarios})
     a.out.with_suffix('.json').write_text(json.dumps(meta, indent=2))
