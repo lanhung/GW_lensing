@@ -30,11 +30,13 @@ from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import RobustScaler, StandardScaler
 from tqdm.auto import tqdm
 
+# Translation-invariant geometry only. The generator places the true lens centre at the
+# origin, so absolute image and centre coordinates would leak the exact centre position.
 GEOMETRY = ['obs__image_separation_observed', 'obs__theta_plus_abs_observed',
-            'obs__theta_minus_abs_observed', 'obs__image_position_asymmetry_observed',
-            'obs__lens_center_x_observed', 'obs__lens_center_y_observed',
-            'obs__image_x_0_observed', 'obs__image_y_0_observed',
-            'obs__image_x_1_observed', 'obs__image_y_1_observed']
+            'obs__theta_minus_abs_observed', 'obs__image_position_asymmetry_observed']
+LEAKY_ABSOLUTE_GEOMETRY = GEOMETRY + ['obs__lens_center_x_observed', 'obs__lens_center_y_observed',
+                                      'obs__image_x_0_observed', 'obs__image_y_0_observed',
+                                      'obs__image_x_1_observed', 'obs__image_y_1_observed']
 FOLLOWUP = ['obs__z_s_observed', 'obs__z_l_observed', 'obs__z_l_over_z_s',
             'obs__sigma_v_observed', 'obs__log_sigma_v_observed']
 DIRECT_SCALE = ['obs__theta_E_observed_direct']

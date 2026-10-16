@@ -280,7 +280,11 @@ def rows_for(model, kw, family, eid, theta, ys, phi, meta, a):
 
 
 def observed_event(rows, prior, eid, rng, a):
-    p, s = sorted(rows,key=lambda r:-r['mu_abs_true'])[:2]
+    # Order images by a noisy *observed* brightness (GW amplitude), never by the true
+    # magnification: selecting the truly brightest image would leak the label.
+    flux_sigma = getattr(a, 'observed_flux_ln_sigma', 0.2)
+    observed_flux = [r['mu_abs_true']*np.exp(rng.normal(0, flux_sigma)) for r in rows]
+    p, s = [rows[i] for i in np.argsort(observed_flux)[::-1][:2]]
     cx, cy = rng.normal(0,a.lens_center_sigma,2)
     xo = np.array([p['x_true'],s['x_true']])+rng.normal(0,a.astrometry_sigma,2)
     yo = np.array([p['y_image_true'],s['y_image_true']])+rng.normal(0,a.astrometry_sigma,2)

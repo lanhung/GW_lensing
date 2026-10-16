@@ -4,7 +4,7 @@ from pathlib import Path
 from types import SimpleNamespace
 import numpy as np
 import pandas as pd
-from common import audit,summarize,load_sis,identity_split,assert_disjoint,Fit,normalized_geometry,GEOMETRY,FAMILIES
+from common import audit,summarize,load_sis,identity_split,assert_disjoint,Fit,normalized_geometry,GEOMETRY,LEAKY_ABSOLUTE_GEOMETRY,FAMILIES
 from matched_transfer import matched_sample,train_subset
 from diagnostics import relation
 from astrometry import observe_sis
@@ -44,9 +44,9 @@ class ScientificGuards(unittest.TestCase):
   for _,g in a.groupby(['split','match_cell']):self.assertEqual(len(set(g.lens_family.value_counts())),1)
   tr=a[a.split=='train'];self.assertEqual(len(train_subset(tr,False,2)),len(train_subset(tr,True,2)))
  def test_normalization_invariant_to_translation_and_dilation(self):
-  d=pd.DataFrame({c:[1.] for c in GEOMETRY});d['obs__image_separation_observed']=4.
+  d=pd.DataFrame({c:[1.] for c in LEAKY_ABSOLUTE_GEOMETRY});d['obs__image_separation_observed']=4.
   n,cols=normalized_geometry(d);changed=d.copy()
-  for c in GEOMETRY:
+  for c in LEAKY_ABSOLUTE_GEOMETRY:
    if 'asymmetry' not in c:changed[c]*=3
   for ax in ['x','y']:
    for c in [f'obs__lens_center_{ax}_observed',f'obs__image_{ax}_0_observed',f'obs__image_{ax}_1_observed']:changed[c]+=8

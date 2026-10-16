@@ -1,0 +1,12 @@
+{
+  "_source": "GWTC-4.0 population paper (LVK 2025, arXiv:2508.18083), fiducial BBH model 'Broken Power Law + 2 Peaks' (BP2P); posterior medians parsed from macros_from_json.tex (macro \\defaultbbh) by realdata/fetch_gwtc4_population.py",
+  "alpha_1": 1.7, "alpha_2": 4.5, "break_mass": 36.0,
+  "mlow_1": 5.1, "mlow_2": 3.6, "mhigh": 300.0,
+  "delta_m_1": 4.3, "delta_m_2": 4.9,
+  "mpp_1": 9.8, "sigpp_1": 0.65, "mpp_2": 33.0, "sigpp_2": 3.9,
+  "lam_0": 0.36, "lam_1": 0.59,
+  "beta": 1.2,
+  "mu_chi": 0.085, "sigma_chi": 0.33,
+  "xi_spin": 0.65, "mu_spin": 0.43, "sigma_spin": 1.2,
+  "kappa": 3.2, "rate_z0p2_gpc3_yr": 16.0
+}
