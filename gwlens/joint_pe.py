@@ -18,6 +18,7 @@ SNR-based measurement model of gwlens.catalogue for this subset.
 import argparse
 import json
 import time
+import zlib
 from pathlib import Path
 
 import bilby
@@ -92,6 +93,11 @@ class JointLensedLikelihood(bilby.Likelihood):
 
     def log_likelihood(self, parameters=None):
         return self.log_likelihood_ratio(parameters) + self.noise_log_likelihood()
+
+
+def event_seed(base, event_id):
+    """Per-event seed, so that every event gets an independent, reproducible noise realisation."""
+    return int((base * 1000003 + zlib.crc32(event_id.encode())) % 2 ** 31)
 
 
 def interferometers(scenario, start, duration, seed):
@@ -251,7 +257,7 @@ def main():
     for i, eid in enumerate(a.event_ids):
         if (a.outdir / f'{a.scenario}_{eid}_summary.json').exists():
             continue
-        s = run_event(cat.loc[eid], a.scenario, a.outdir, a.seed + 17 * i, a.nlive, a.npool, a.naccept)
+        s = run_event(cat.loc[eid], a.scenario, a.outdir, event_seed(a.seed, eid), a.nlive, a.npool, a.naccept)
         print(json.dumps({k: s[k] for k in ('event_id', 'snr_a', 'snr_b', 'seconds', 'true_ln_mu_rel', 'ln_mu_rel_median', 'ln_mu_rel_sd')}), flush=True)
 
 

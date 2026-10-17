@@ -427,8 +427,9 @@ def run_posthoc(event, gw_post, a):
 def run_full(event, a):
     import bilby
     from bilby.core.prior import LogUniform, Uniform
-    from .joint_pe import gw_likelihood, priors_for
+    from .joint_pe import event_seed, gw_likelihood, priors_for
     t0 = time.time()
+    a.seed = event_seed(a.seed, event['event_id'])  # same noise as gwlens.joint_pe for this event
     model, lens, comb, priors, sample_kext = _setup(event, a)
     row = pd.Series(event['row'])
     gw_like, base, truth, duration, snrs = gw_likelihood(row, event['scenario'], a.seed)
