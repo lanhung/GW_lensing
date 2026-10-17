@@ -80,3 +80,12 @@ PY=python scripts/run_gwem_posthoc.sh inputs/gwem results/pe results/gwem_postho
 By default this runs four configurations: the true family and EPL+shear without a cosmology,
 EPL+shear with ΛCDM and `sigma_kext = 0.025`, and EPL+shear without a cosmology but with
 `sigma_kext = 0.025`.
+
+## Reproducibility note
+
+`gwlens.joint_pe.interferometers` seeds bilby's own random generator (bilby >= 2 does not use
+numpy's global generator for detector noise) since commit "Seed bilby noise generator". The
+first 14 events of the 2026-10-16 batch (listed in `results/pe/events_started_before_seed_fix.txt`
+on the analysis server) were run before this fix. Their posteriors are valid, because each run
+generates its data once and analyses it consistently, but their noise realisations cannot be
+regenerated from the seed.

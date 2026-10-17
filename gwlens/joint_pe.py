@@ -98,6 +98,7 @@ def interferometers(scenario, start, duration, seed):
     import os
     import bilby
     np.random.seed(seed)
+    bilby.core.utils.random.seed(seed)  # bilby >= 2 draws noise from its own generator
     ifos = bilby.gw.detector.InterferometerList(SCENARIO_IFOS[scenario])
     base = os.path.join(os.path.dirname(bilby.__file__), 'gw', 'detector', 'noise_curves')
     for ifo in ifos:
