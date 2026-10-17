@@ -202,7 +202,7 @@ def gw_likelihood(row, scenario, seed):
         inj_gen = bilby.gw.WaveformGenerator(duration=duration, sampling_frequency=SAMPLING_FREQUENCY, start_time=start,
                                              frequency_domain_source_model=lensed_bbh,
                                              parameter_conversion=convert_to_lal_binary_black_hole_parameters,
-                                             waveform_arguments=wf_args)
+                                             waveform_arguments=dict(wf_args))
         inj = {kk: p[kk] for kk in ('mass_1', 'mass_2', 'chi_1', 'chi_2', 'ra', 'dec', 'psi', 'theta_jn', 'phase',
                                      'luminosity_distance', 'geocent_time', 'morse_n')}
         ifos.inject_signal(waveform_generator=inj_gen, parameters=inj, raise_error=False)
@@ -210,7 +210,7 @@ def gw_likelihood(row, scenario, seed):
         gen = bilby.gw.WaveformGenerator(duration=duration, sampling_frequency=SAMPLING_FREQUENCY, start_time=start,
                                          frequency_domain_source_model=lensed_bbh_relative_binning,
                                          parameter_conversion=convert_to_lal_binary_black_hole_parameters,
-                                         waveform_arguments=wf_args)
+                                         waveform_arguments=dict(wf_args))  # relative binning adds its bin edges here
         fid = dict(inj, chirp_mass=truth['chirp_mass'], mass_ratio=truth['mass_ratio'])
         likes.append(bilby.gw.likelihood.RelativeBinningGravitationalWaveTransient(
             interferometers=ifos, waveform_generator=gen, fiducial_parameters=fid, epsilon=0.025))
