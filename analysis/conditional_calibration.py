@@ -15,7 +15,7 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from analysis.benchmark import ALPHA, CQR, split  # noqa: E402
-from analysis.features import FAMILIES, INPUT_SETS, load  # noqa: E402
+from analysis.features import ALL_SETS, FAMILIES, load  # noqa: E402
 
 TRUE_BINS = [0, 2, 3, 5, 10, 20, np.inf]
 
@@ -30,7 +30,7 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--data-dir', type=Path, default=Path('data/v2'))
     p.add_argument('--out-dir', type=Path, required=True)
-    p.add_argument('--input-set', default='Geometry+GW(rel)')
+    p.add_argument('--input-set', default='Geometry+GW(ratio)')
     p.add_argument('--seeds', nargs='+', type=int, default=[0, 1, 2])
     p.add_argument('--pred-bins', type=int, default=5)
     a = p.parse_args()
@@ -43,7 +43,7 @@ def main():
             for seed in a.seeds:
                 lab = split(d, seed)
                 tr, ca, te = d[lab == 'train'], d[lab == 'cal'], d[lab == 'test']
-                m = CQR(INPUT_SETS[a.input_set], seed).fit(tr)
+                m = CQR(ALL_SETS[a.input_set], seed).fit(tr)
                 lo_c, med_c, hi_c = m.raw(ca)
                 y_c = np.log(ca.mu.to_numpy())
                 s_c = np.maximum(lo_c - y_c, y_c - hi_c)

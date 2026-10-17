@@ -18,7 +18,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from analysis.features import FAMILIES, load  # noqa: E402
 
 FAM_LABEL = {'SIS': 'SIS', 'SIE': 'SIE', 'SIE_shear': 'SIE+shear', 'EPL_shear': 'EPL+shear'}
-SET_ORDER = ['GW', 'GW+z', 'Geometry', 'Geometry+FU', 'Geometry+GW(rel)', 'Full']
+MAIN = 'Geometry+GW(ratio)'  # scale-free main input set
+SET_ORDER = ['GW', 'GW+z', 'Geometry', 'Geometry+FU', MAIN, 'Geometry+GW(rel)', 'Full']
 BASE_ORDER = ['SIS analytic (GW relative)', 'SIS analytic (geometry)', 'Known z_s + cosmology']
 COLORS = {'SIS': '#2a6f97', 'SIE': '#c8553d', 'SIE_shear': '#588157', 'EPL_shear': '#8d6a9f'}
 plt.rcParams.update({'font.size': 8, 'axes.labelsize': 8, 'legend.fontsize': 7, 'xtick.labelsize': 7, 'ytick.labelsize': 7,
@@ -36,7 +37,7 @@ def fmt(m, s=None, d=2):
     return f'{m:.{d}f}' if s is None or not np.isfinite(s) else f'{m:.{d}f}$\\pm${s:.{d}f}'
 
 
-NPE_SETS = ['GW', 'Geometry', 'Geometry+GW(rel)+FU', 'Full']
+NPE_SETS = ['GW', 'Geometry', MAIN, 'Geometry+GW(rel)+FU', 'Full']
 
 
 def load_npe(npe_dir):
@@ -111,13 +112,13 @@ def fig_inputs(met, out):
 def fig_tail(pred, out, npe_dir=None):
     fig, axes = plt.subplots(1, 4, figsize=(PAGE, 2.3), sharey=True)
     bins = np.geomspace(1, 100, 16)
-    npe_path = npe_dir / 'npe_predictions_ET_Geometry_GWrel_FU.parquet' if npe_dir else None
-    for ax, name in zip(axes, ['Geometry', 'Geometry+GW(rel)', 'Full', 'NPE']):
-        if name == 'NPE':
+    for ax, name in zip(axes, ['Geometry', MAIN, 'NPE: ' + MAIN, 'NPE: Geometry+GW(rel)+FU']):
+        if name.startswith('NPE'):
+            tag = name[5:].replace('+', '_').replace('(', '').replace(')', '')
+            npe_path = npe_dir / f'npe_predictions_ET_{tag}.parquet' if npe_dir else None
             if npe_path is None or not npe_path.exists():
                 continue
             p = pd.read_parquet(npe_path)
-            name = 'NPE: Geometry+GW(rel)+FU'
         else:
             p = pred[(pred.experiment == 'inputs') & (pred.scenario == 'ET') & (pred.input_set == name)]
         for f in FAMILIES:
@@ -140,25 +141,34 @@ def fig_tail(pred, out, npe_dir=None):
     plt.close(fig)
 
 
-def fig_coverage(met, npe, cond, out):
+def fig_coverage(met, npe, cond, out, mixed=None):
     fig, axes = plt.subplots(1, 3, figsize=(PAGE, 2.4), constrained_layout=True)
     ax = axes[0]
-    g = met[(met.experiment == 'mixed') & (met.scenario == 'ET') & (met.input_set == 'Geometry+GW(rel)')]
     x = np.arange(len(FAMILIES))
-    for k, (cal, lab, c) in enumerate([('global', 'CQR, global', '#999999'), ('mondrian', 'CQR, per family', '#2a6f97')]):
-        v = g[g.calibration == cal].groupby('test_family').coverage90.agg(['mean', 'std']).reindex(FAMILIES)
-        ax.errorbar(x + (k - 1) * 0.18, v['mean'], v['std'].fillna(0), fmt='o', color=c, label=lab, ms=3, capsize=2)
+    if mixed is not None:  # analysis/review_tests.py: calibration groups without and with the true family
+        g = mixed[(mixed.scenario == 'ET') & (mixed.input_set == MAIN)]
+        cals = [('global', 'CQR, global', '#999999'), ('pred_mu', r'CQR, by predicted $\mu$', '#b0a24a'),
+                ('epl_only', 'CQR, EPL+shear cal.', '#588157'), ('true_family', 'CQR, true family', '#2a6f97')]
+        for k, (cal, lab, c) in enumerate(cals):
+            v = g[g.calibration == cal].groupby('test_family').coverage90.agg(['mean', 'std']).reindex(FAMILIES)
+            ax.errorbar(x + (k - 2) * 0.13, v['mean'], v['std'].fillna(0), fmt='o', color=c, label=lab, ms=2.5, capsize=1.5)
+    else:
+        g = met[(met.experiment == 'mixed') & (met.scenario == 'ET') & (met.input_set == MAIN)]
+        for k, (cal, lab, c) in enumerate([('global', 'CQR, global', '#999999'), ('mondrian', 'CQR, per family', '#2a6f97')]):
+            v = g[g.calibration == cal].groupby('test_family').coverage90.agg(['mean', 'std']).reindex(FAMILIES)
+            ax.errorbar(x + (k - 1) * 0.18, v['mean'], v['std'].fillna(0), fmt='o', color=c, label=lab, ms=3, capsize=2)
     if npe is not None:
         v = npe.set_index('family').reindex(FAMILIES)
-        ax.plot(x + 0.18, v.coverage90, 's', mfc='none', color='#c8553d', ms=3.5, label='NPE, raw')
+        ax.plot(x + 0.26, v.coverage90, 's', mfc='none', color='#c8553d', ms=3, label='NPE, raw')
         if 'coverage90_conformal' in v:
-            ax.plot(x + 0.36, v.coverage90_conformal, 's', color='#c8553d', ms=3.5, label='NPE, conformal')
+            ax.plot(x + 0.39, v.coverage90_conformal, 's', color='#c8553d', ms=3, label='NPE, true family')
     ax.axhline(0.9, color='k', lw=0.6, ls='--')
     ax.set_xticks(x)
     ax.set_xticklabels([FAM_LABEL[f] for f in FAMILIES], rotation=20)
     ax.set_ylabel('coverage of 90% intervals')
     ax.legend(frameon=False, loc='lower left', fontsize=6)
     ax.set_ylim(0.6, 1.0)
+    ax.set_title('mixed-family model', fontsize=8)
     ax = axes[1]
     if cond is not None:
         c = cond[(cond.scenario == 'ET') & (cond.mu_bin != 'all')]
@@ -190,7 +200,7 @@ def fig_coverage(met, npe, cond, out):
 
 def fig_transfer(met, out):
     fig, axes = plt.subplots(1, 2, figsize=(PAGE, 2.9), constrained_layout=True)
-    for ax, name in zip(axes, ['Geometry', 'Geometry+GW(rel)']):
+    for ax, name in zip(axes, ['Geometry', MAIN]):
         g = met[(met.experiment == 'transfer') & (met.scenario == 'ET') & (met.input_set == name)]
         m = g.pivot_table(index='train_family', columns='test_family', values='median_rel').reindex(index=FAMILIES, columns=FAMILIES)
         c = g.pivot_table(index='train_family', columns='test_family', values='coverage90').reindex(index=FAMILIES, columns=FAMILIES)
@@ -215,7 +225,7 @@ def fig_transfer(met, out):
 def fig_distance(pred, out):
     fig, ax = plt.subplots(figsize=(COL, 2.4))
     p = pred[(pred.experiment == 'inputs') & (pred.scenario == 'ET')]
-    for name, ls in [('Geometry+GW(rel)', '-'), ('Full', '--'), ('GW', ':')]:
+    for name, ls in [(MAIN, '-'), ('Full', '--'), ('GW', ':')]:
         q = p[p.input_set == name]
         dhat = np.exp(q.ln_dapp_a) * np.sqrt(q.pred)
         e = np.log(dhat / q.dl_true)
@@ -307,6 +317,7 @@ def main():
     p.add_argument('--results', type=Path, required=True)
     p.add_argument('--npe', type=Path, default=None, help='NPE summary CSV used for the coverage figure')
     p.add_argument('--npe-dir', type=Path, default=None, help='Directory with all NPE outputs')
+    p.add_argument('--review-dir', type=Path, default=None, help='Output of analysis/review_tests.py (calibration groups)')
     p.add_argument('--realdata', type=Path, default=Path('realdata/outputs'))
     p.add_argument('--data-dir', type=Path, default=Path('data/v2'))
     p.add_argument('--out-dir', type=Path, required=True)
@@ -322,7 +333,8 @@ def main():
         table_inputs(met, scen, a.out_dir, npe_all)
     fig_inputs(met, a.out_dir)
     fig_tail(pred, a.out_dir, a.npe_dir)
-    fig_coverage(met, npe, cond, a.out_dir)
+    mixed = pd.read_csv(a.review_dir / 'mixed_calibration.csv') if a.review_dir else None
+    fig_coverage(met, npe, cond, a.out_dir, mixed)
     fig_transfer(met, a.out_dir)
     fig_distance(pred, a.out_dir)
     fig_learning(met, a.out_dir)

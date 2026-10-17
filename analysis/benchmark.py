@@ -25,7 +25,12 @@ from sklearn.ensemble import HistGradientBoostingRegressor
 
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from analysis.features import FAMILIES, INPUT_SETS, check_inputs, load  # noqa: E402
+from analysis.features import ALL_SETS, FAMILIES, INPUT_SETS, check_inputs, load  # noqa: E402
+
+# Main input set for the mixed-family, transfer and sky experiments: geometry plus the scale-free GW
+# observables (relative magnification and arrival order), invariant under the mass-sheet transformation.
+MAIN = 'Geometry+GW(ratio)'
+BENCH_SETS = {**INPUT_SETS, MAIN: ALL_SETS[MAIN]}
 
 ALPHA = 0.10
 HGB = dict(max_iter=500, learning_rate=0.05, max_leaf_nodes=31, min_samples_leaf=20, l2_regularization=0.1,
@@ -146,7 +151,7 @@ def experiment_inputs(data, scenario, seeds, max_train):
                 base_rows.append(dict(experiment='inputs', scenario=scenario, train_family=fam, test_family=fam, input_set=name,
                                       method='analytic', split_seed=seed, calibration='none', n_train=0,
                                       **metrics(te.mu.to_numpy(), mu_hat, rng=rng)))
-            for name, cols in INPUT_SETS.items():
+            for name, cols in BENCH_SETS.items():
                 tag = dict(experiment='inputs', scenario=scenario, train_family=fam, input_set=name, method='HistGB-CQR',
                            split_seed=seed, n_train=len(tr))
                 jobs.append((tr, ca, te, cols, seed, tag, False, seed == seeds[0]))
@@ -160,14 +165,14 @@ def experiment_mixed(data, scenario, seeds, max_train):
         tr, ca, te = data[lab == 'train'], data[lab == 'cal'], data[lab == 'test']
         if max_train:
             tr = tr.groupby('family').head(max_train)
-        for name in ('Geometry', 'Geometry+GW(rel)', 'Full'):
+        for name in ('Geometry', MAIN, 'Full'):
             tag = dict(experiment='mixed', scenario=scenario, train_family='all', input_set=name, method='HistGB-CQR', split_seed=seed, n_train=len(tr))
-            jobs.append((tr, ca, te, INPUT_SETS[name], seed, tag, True, seed == seeds[0]))
+            jobs.append((tr, ca, te, BENCH_SETS[name], seed, tag, True, seed == seeds[0]))
         for omit in FAMILIES:
             keep = tr.family != omit
-            tag = dict(experiment='leave_one_out', scenario=scenario, train_family=f'all-{omit}', input_set='Geometry+GW(rel)',
+            tag = dict(experiment='leave_one_out', scenario=scenario, train_family=f'all-{omit}', input_set=MAIN,
                        method='HistGB-CQR', split_seed=seed, n_train=int(keep.sum()))
-            jobs.append((tr[keep], ca[ca.family != omit], te[te.family == omit], INPUT_SETS['Geometry+GW(rel)'], seed, tag, False, False))
+            jobs.append((tr[keep], ca[ca.family != omit], te[te.family == omit], BENCH_SETS[MAIN], seed, tag, False, False))
     return jobs
 
 
@@ -180,9 +185,9 @@ def experiment_transfer(data, scenario, seed, max_train):
         if max_train:
             tr = tr.iloc[:max_train]
         te = data[lab == 'test']
-        for name in ('Geometry', 'Geometry+GW(rel)'):
+        for name in ('Geometry', MAIN):
             tag = dict(experiment='transfer', scenario=scenario, train_family=ftr, input_set=name, method='HistGB-CQR', split_seed=seed, n_train=len(tr))
-            jobs.append((tr, ca, te, INPUT_SETS[name], seed, tag, False, False))
+            jobs.append((tr, ca, te, BENCH_SETS[name], seed, tag, False, False))
     return jobs
 
 
@@ -235,9 +240,9 @@ def main():
             for fam in FAMILIES:
                 d = known[known.family == fam].reset_index(drop=True)
                 lab = split(d, a.seeds[0])
-                for name in ('GW', 'Geometry+GW(rel)'):
+                for name in ('GW', MAIN):
                     tag = dict(experiment='sky_known', scenario=scen, train_family=fam, input_set=name, method='HistGB-CQR', split_seed=a.seeds[0], n_train=int((lab == 'train').sum()))
-                    jobs.append((d[lab == 'train'], d[lab == 'cal'], d[lab == 'test'], INPUT_SETS[name], a.seeds[0], tag, False, False))
+                    jobs.append((d[lab == 'train'], d[lab == 'cal'], d[lab == 'test'], BENCH_SETS[name], a.seeds[0], tag, False, False))
                 rng = np.random.default_rng(0)
                 te = d[lab == 'test']
                 base.append(dict(experiment='sky_known', scenario=scen, train_family=fam, test_family=fam, input_set='SIS analytic (GW relative)',
