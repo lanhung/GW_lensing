@@ -114,3 +114,18 @@ def check_inputs(cols):
     if bad:
         raise ValueError(f'Forbidden model inputs: {bad}')
     return cols
+
+
+def distance_scale_transform(d, h):
+    """Rescale all cosmological distances by 1/h (e.g. a Hubble constant h times the simulated one).
+
+    Redshifts, image geometry and magnifications are unchanged; the delays scale with the time-delay
+    distance (dt -> dt / h) and the source distance with d_L (SNR -> h SNR, D_app -> D_app / h). The
+    cosmology estimator keeps the simulated d_L(z) relation, as an analyst assuming it would.
+    """
+    t = d.copy()
+    t['gw_ln_abs_dt'] = d.gw_ln_abs_dt - np.log(h)
+    t['gw_rho_a'], t['gw_rho_b'] = d.gw_rho_a * h, d.gw_rho_b * h
+    t['gw_ln_dapp_a'], t['gw_ln_dapp_b'] = d.gw_ln_dapp_a - np.log(h), d.gw_ln_dapp_b - np.log(h)
+    t['gw_ln_mu_cosmo'] = d.gw_ln_mu_cosmo + 2 * np.log(h)
+    return t
