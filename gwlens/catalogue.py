@@ -191,13 +191,15 @@ def replay(catalogue, event_id, chunk=None):
     n_chunks = int(np.ceil(meta['n_systems'] / chunk))
     seed = np.random.SeedSequence([meta['seed'], lenses.FAMILIES.index(family)]).generate_state(n_chunks)[i // chunk]
     rng = np.random.default_rng(int(seed))
+    np.random.seed(int(seed) % 2 ** 32)  # lenstronomy's solver draws from the global generator
     cal = calibration()
     for _ in range(i % chunk + 1):
         row = simulate_system(rng, family, tuple(meta['scenarios']), cal, full=True)
     stored = pd.read_parquet(catalogue, filters=[('event_id', '==', event_id)]).iloc[0]
     for k in ('true_z_s', 'true_m1', 'true_ra', 'true_t0'):
         if not np.isclose(row[k], stored[k], rtol=0, atol=1e-12):
-            raise RuntimeError(f'replay of {event_id} does not reproduce {k}; wrong chunk size?')
+            raise RuntimeError(f'replay of {event_id} does not reproduce {k} (wrong chunk size, or a catalogue '
+                               'generated before the solver seeding of _worker)')
     row['event_id'] = event_id
     return row
 
@@ -205,6 +207,9 @@ def replay(catalogue, event_id, chunk=None):
 def _worker(args):
     family, scenarios, n, seed = args
     rng = np.random.default_rng(seed)
+    # lenstronomy's lens-equation solver draws random starting points from numpy's global
+    # generator; seeding it per chunk makes every system exactly reproducible by replay().
+    np.random.seed(seed % 2 ** 32)
     cal = calibration()
     return [simulate_system(rng, family, scenarios, cal) for _ in range(n)]
 
