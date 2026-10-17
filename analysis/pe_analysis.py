@@ -10,6 +10,8 @@ Reads the per-event summaries and posteriors written by gwlens.joint_pe and
 * reports how often the relative Morse index is identified;
 * feeds the PE relative magnification into the saved NPE flows (analysis/npe.py) in place of the
   SNR-model measurement and compares the end-to-end absolute-magnification errors.
+
+Free-sky runs and known-sky reruns (sky fixed to the host) are summarised separately.
 """
 import argparse
 import json
@@ -61,18 +63,22 @@ def load_events(pe_dir, data_dir):
                  pit_ln_d=float(np.mean(lnd < true_lnd)), true_ln_d=float(true_lnd),
                  model_ln_mu_rel=float(row[p + 'obs_ln_mu_rel']), model_ln_d=float(row[p + 'obs_ln_dapp_a']),
                  true_mu_a=float(row[p + 'true_mu_a']), n_images=int(row[p + 'geo_n_images']),
-                 cos_iota=float(row.true_cos_iota), known_sky=bool(s.get('known_sky', False)))
+                 cos_iota=float(row.true_cos_iota),
+                 known_sky=bool(s.get('known_sky', False)) or f.name.endswith('_knownsky_summary.json'))
         rows.append(r)
     return pd.DataFrame(rows), cats
 
 
-def end_to_end(ev, cats, flow_dir, device='cpu'):
-    """Absolute-magnification NPE with the SNR-model versus the PE relative magnification."""
+def end_to_end(ev, cats, flow_dir, flow_name, device='cpu'):
+    """Absolute-magnification NPE with the SNR-model versus the PE relative magnification.
+
+    Returns the per-family summary and the per-event conformal 90 per cent intervals of ln mu_A.
+    """
     import torch
     from analysis.npe import load_flow, posterior_samples, standardise
-    out = []
-    for scen, g in ev.groupby('scenario'):
-        ck = Path(flow_dir) / f'flow_{scen}_Geometry_GWrel_FU.pt'
+    out, per_event = [], []
+    for (scen, sky), g in ev.groupby(['scenario', 'known_sky']):
+        ck = Path(flow_dir) / f'flow_{scen}_{flow_name}.pt'
         if not ck.exists():
             continue
         flow, meta = load_flow(ck, device)
@@ -89,12 +95,15 @@ def end_to_end(ev, cats, flow_dir, device='cpu'):
             y = np.log(f.mu.to_numpy())
             qv = np.array([meta['qconf'][fam] for fam in f.family])
             lo, hi = np.quantile(smp, 0.05, 1) - qv, np.quantile(smp, 0.95, 1) + qv
+            per_event.append(pd.DataFrame(dict(scenario=scen, known_sky=sky, event_id=f.event_id.to_numpy(),
+                                               family=f.family.to_numpy(), gw_input=tag, true_ln_mu_a=y,
+                                               ln_mu_a_median=np.median(smp, 1), ln_mu_a_q05=lo, ln_mu_a_q95=hi)))
             for fam, m in [(fm, f.family.to_numpy() == fm) for fm in f.family.unique()] + [('all', np.ones(len(f), bool))]:
                 med = np.exp(np.median(smp[m], 1))
-                out.append(dict(scenario=scen, family=fam, gw_input=tag, n=int(m.sum()),
+                out.append(dict(scenario=scen, known_sky=sky, family=fam, gw_input=tag, n=int(m.sum()),
                                 median_rel=float(np.median(np.abs(med - f.mu.to_numpy()[m]) / f.mu.to_numpy()[m])),
                                 coverage90_conformal=float(np.mean((y[m] >= lo[m]) & (y[m] <= hi[m])))))
-    return pd.DataFrame(out)
+    return pd.DataFrame(out), (pd.concat(per_event, ignore_index=True) if per_event else pd.DataFrame())
 
 
 def summarise(ev, cats, cal):
@@ -168,7 +177,8 @@ def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument('--pe-dir', type=Path, default=Path('results/pe'))
     p.add_argument('--data-dir', type=Path, default=Path('data/pe'))
-    p.add_argument('--flow-dir', type=Path, default=Path('results/v2_npe_ckpt'))
+    p.add_argument('--flow-dir', type=Path, default=Path('results/v2_review_npe2'))
+    p.add_argument('--flow-name', default='Geometry_GWratio_FU', help='input set of the flows flow_<scenario>_<name>.pt')
     p.add_argument('--out-dir', type=Path, default=Path('results/pe_analysis'))
     p.add_argument('--figure', type=Path, default=None)
     a = p.parse_args()
@@ -177,12 +187,14 @@ def main():
     cal = dict(a=cal.get('a', cal.get('sigma_floor')), b=cal.get('b', cal.get('snr_coefficient')))
     ev_all, cats = load_events(a.pe_dir, a.data_dir)
     ev_all.to_csv(a.out_dir / 'pe_events.csv', index=False)
-    ev = ev_all[~ev_all.known_sky]  # known-sky reruns are compared separately
-    print(f'{len(ev)} PE events, {int(ev_all.known_sky.sum())} known-sky reruns')
-    summ = summarise(ev, cats, cal)
+    print(f'{int((~ev_all.known_sky).sum())} free-sky PE runs, {int(ev_all.known_sky.sum())} known-sky reruns')
+    summ = pd.concat([summarise(g, cats, cal).assign(known_sky=ks) for ks, g in ev_all.groupby('known_sky')])
     summ.to_csv(a.out_dir / 'pe_summary.csv', index=False)
-    e2e = end_to_end(ev, cats, a.flow_dir)
+    e2e, e2e_events = end_to_end(ev_all, cats, a.flow_dir, a.flow_name)
     e2e.to_csv(a.out_dir / 'pe_end_to_end.csv', index=False)
+    e2e_events.to_csv(a.out_dir / 'pe_end_to_end_events.csv', index=False)
+    # the figure uses the analyses the paper relies on: known-sky for ET, free-sky for O5
+    ev = ev_all[ev_all.known_sky == (ev_all.scenario == 'ET')]
     pd.set_option('display.width', 250)
     print(summ.round(3).to_string())
     print(e2e.round(3).to_string())
