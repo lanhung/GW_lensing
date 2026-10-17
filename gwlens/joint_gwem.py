@@ -97,6 +97,25 @@ def prepare_event(catalogue, event_id, scenario):
     return _jsonable(dict(event_id=event_id, family=row['family'], scenario=scenario, em=data, truth=truth, row=row))
 
 
+def degrade_astrometry(event, sigma_img_gw, seed):
+    """Astrometry sensitivity test: give the GW-source images a positional error sigma_img_gw (arcsec).
+
+    The image positions of the BBH need not coincide with directly observed host features; they are
+    reconstructed with an uncertainty that may exceed the 0.01-arcsec default. The observed GW-image
+    positions receive the extra scatter sqrt(sigma_img_gw^2 - sigma_img^2), so that data and
+    likelihood stay consistent; other host images keep sigma_img.
+    """
+    em = dict(event['em'])
+    extra = np.sqrt(max(sigma_img_gw ** 2 - em['sigma_img'] ** 2, 0.0))
+    rng = np.random.default_rng(seed)
+    x, y = list(em['x']), list(em['y'])
+    for k in (em['gw_a'], em['gw_b']):
+        x[k] += float(rng.normal(0, extra))
+        y[k] += float(rng.normal(0, extra))
+    em.update(x=x, y=y, sigma_img_gw=float(sigma_img_gw))
+    return dict(event, em=em)
+
+
 # ---------------------------------------------------------------------------
 # Lens model
 # ---------------------------------------------------------------------------
@@ -109,7 +128,10 @@ class LensForward:
         names = ['SIS'] if model == 'SIS' else ['EPL_NUMBA'] + ([] if model == 'SIE' else ['SHEAR'])
         self.lm = LensModel(names)
         self.x, self.y = np.asarray(em['x'], float), np.asarray(em['y'], float)
-        self.s2 = em['sigma_img'] ** 2
+        sig = np.full(len(self.x), float(em['sigma_img']))
+        if em.get('sigma_img_gw'):
+            sig[[em['gw_a'], em['gw_b']]] = em['sigma_img_gw']
+        self.s2 = sig ** 2
         self.em = em
         self.theta_e_per_sigma2 = float(pop.einstein_radius_arcsec(1.0, em['z_l'], em['z_s']))
 
@@ -150,8 +172,7 @@ class LensForward:
         sx, sy = (W22 * c1 - W12 * c2) / detW, (W11 * c2 - W12 * c1) / detW
         dx, dy = bx - sx, by - sy
         chi2 = float(np.sum(w11 * dx ** 2 + 2 * w12 * dx * dy + w22 * dy ** 2))
-        n = len(x)
-        log_l = -0.5 * chi2 - 0.5 * np.log(detW) + np.log(TWO_PI) - n * np.log(TWO_PI * self.s2)
+        log_l = -0.5 * chi2 - 0.5 * np.log(detW) + np.log(TWO_PI) - np.sum(np.log(TWO_PI * self.s2))
         # One Newton step to the model image positions, then image properties there.
         xs, ys = x - (m11 * dx + m12 * dy), y - (m21 * dx + m22 * dy)
         a11, a12, a21, a22, det = self._jacobian(xs, ys, kw)
@@ -396,7 +417,8 @@ def _setup(event, a):
 
 
 def _label(event, a, mode):
-    return f"{event['scenario']}_{event['event_id']}_{mode}_{a.cosmology}_{a.lens_model or event['family']}"
+    tag = f"_ast{a.sigma_img_gw:g}" if a.sigma_img_gw else ''
+    return f"{event['scenario']}_{event['event_id']}_{mode}_{a.cosmology}_{a.lens_model or event['family']}{tag}"
 
 
 def _sampler_kwargs(a):
@@ -418,7 +440,7 @@ def run_posthoc(event, gw_post, a):
     post = derived(res.posterior, lens, comb, None, gw, sample_kext, np.random.default_rng(a.seed))
     post.to_parquet(a.out_dir / f'{label}_posterior.parquet', index=False)
     s = summarise(post, event, dict(mode='posthoc', cosmology=a.cosmology, lens_model=model, sigma_kext=a.sigma_kext,
-                                    assignment=a.assignment, seconds=time.time() - t0,
+                                    sigma_img_gw=a.sigma_img_gw, assignment=a.assignment, seconds=time.time() - t0,
                                     log_evidence=float(res.log_evidence)))
     (a.out_dir / f'{label}_summary.json').write_text(json.dumps(s, indent=1))
     return s
@@ -453,7 +475,7 @@ def run_full(event, a):
         post['luminosity_distance_source'] = post.luminosity_distance * np.sqrt(post.mu_a)
     post.to_parquet(a.out_dir / f'{label}_posterior.parquet', index=False)
     s = summarise(post, event, dict(mode='full', cosmology=a.cosmology, lens_model=model, sigma_kext=a.sigma_kext,
-                                    assignment=a.assignment, seconds=time.time() - t0, snr_a=snrs[0], snr_b=snrs[1],
+                                    sigma_img_gw=a.sigma_img_gw, assignment=a.assignment, seconds=time.time() - t0, snr_a=snrs[0], snr_b=snrs[1],
                                     duration=duration, log_bayes_factor=float(res.log_bayes_factor)))
     (a.out_dir / f'{label}_summary.json').write_text(json.dumps(s, indent=1))
     return s
@@ -477,6 +499,9 @@ def main():
         q.add_argument('--lens-model', choices=LENS_MODELS, default=None, help='default: the simulated family')
         q.add_argument('--assignment', choices=['known', 'marginalise'], default='known',
                        help='which EM images host the GW images: known, or summed over all ordered pairs')
+        q.add_argument('--sigma-img-gw', type=float, default=0.0,
+                       help='astrometry test: positional error (arcsec) of the GW-source images, with matching extra '
+                            'scatter added to their observed positions (0: the simulated 0.01 arcsec)')
         q.add_argument('--sampler', default='dynesty')
         q.add_argument('--nlive', type=int, default=500 if name == 'posthoc' else 300)
         q.add_argument('--naccept', type=int, default=30)
@@ -494,6 +519,9 @@ def main():
             print(a.out_dir / f'{a.scenario}_{eid}.json', len(ev['em']['x']), 'images')
         return
     event = json.loads(a.event.read_text())
+    if a.sigma_img_gw:
+        from .joint_pe import event_seed
+        event = degrade_astrometry(event, a.sigma_img_gw, event_seed(a.seed + 1, event['event_id']))
     if a.cmd == 'posthoc':
         s = run_posthoc(event, pd.read_parquet(a.gw_posterior), a)
     else:

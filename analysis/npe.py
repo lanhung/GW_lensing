@@ -18,7 +18,7 @@ import zuko
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from analysis.benchmark import metrics, split  # noqa: E402
-from analysis.features import FAMILIES, FOLLOWUP, GEO, INPUT_SETS, check_inputs, load  # noqa: E402
+from analysis.features import ALL_SETS, FAMILIES, check_inputs, load, mass_sheet_transform  # noqa: E402
 
 LEVELS = [0.5, 0.68, 0.9, 0.95]
 
@@ -89,9 +89,7 @@ def main():
     p.add_argument('--device', default='cuda' if torch.cuda.is_available() else 'cpu')
     a = p.parse_args()
     a.out_dir.mkdir(parents=True, exist_ok=True)
-    sets = dict(INPUT_SETS)
-    sets['Geometry+GW(rel)+FU'] = INPUT_SETS['Geometry+GW(rel)'] + FOLLOWUP
-    cols = check_inputs(sets[a.input_set])
+    cols = check_inputs(ALL_SETS[a.input_set])
     data = load(a.data_dir, a.scenario, max_per_family=a.max_per_family, seed=1)
     lab = split(data, a.seed)
     # Early stopping uses 10 per cent of the training set; the calibration set is reserved for
@@ -109,21 +107,33 @@ def main():
                     qconf=None), a.out_dir / f'flow_{a.scenario}_{a.input_set.replace("+", "_").replace("(", "").replace(")", "")}.pt')
     samples = posterior_samples(flow, xte, a.device)
     y = np.log(te.mu.to_numpy())
-    # Conformal recalibration (per family) of the central 90 per cent posterior interval.
+    # Conformal recalibration of the central 90 per cent posterior interval.
     xca, _, _ = standardise(ca[cols].to_numpy(float), m, s)
     sca = posterior_samples(flow, xca, a.device)
     yca = np.log(ca.mu.to_numpy())
-    sc = np.maximum(np.quantile(sca, 0.05, 1) - yca, yca - np.quantile(sca, 0.95, 1))
-    qconf = {}
-    for fam in FAMILIES:
-        v = np.sort(sc[ca.family.to_numpy() == fam])
+    lo_ca, hi_ca = np.quantile(sca, 0.05, 1), np.quantile(sca, 0.95, 1)
+    sc = np.maximum(lo_ca - yca, yca - hi_ca)
+    # Conformal groups. 'family' uses the true lens family (a diagnostic: unknown for real events);
+    # 'n_images' (observed image multiplicity) and 'pred_mu' (quintiles of the predicted ln mu, edges
+    # fixed on the calibration set) use observed quantities only.
+    med_ca = np.median(sca, 1)
+    edges = np.quantile(med_ca, [0.2, 0.4, 0.6, 0.8])
+    groups_ca = dict(family=ca.family.to_numpy(), n_images=np.minimum(ca.geo_n_images.to_numpy(), 4).astype(int),
+                     pred_mu=np.digitize(med_ca, edges), none=np.zeros(len(ca), int))
+    groups_te = dict(family=te.family.to_numpy(), n_images=np.minimum(te.geo_n_images.to_numpy(), 4).astype(int),
+                     pred_mu=np.digitize(np.median(samples, 1), edges), none=np.zeros(len(te), int))
+
+    def conformal(v):
+        v = np.sort(v)
         k = int(np.ceil((len(v) + 1) * 0.9))
-        qconf[fam] = float(v[min(k, len(v)) - 1])
+        return float(v[min(k, len(v)) - 1]) if len(v) else np.inf
+    qgroup = {g: {str(k): conformal(sc[groups_ca[g] == k]) for k in np.unique(groups_ca[g])} for g in groups_ca}
+    qconf = qgroup['family']
     ck = a.out_dir / f'flow_{a.scenario}_{a.input_set.replace("+", "_").replace("(", "").replace(")", "")}.pt'
     saved = torch.load(ck, weights_only=False)
-    saved['qconf'] = qconf
+    saved.update(qconf=qconf, qgroup=qgroup, pred_mu_edges=edges)
     torch.save(saved, ck)
-    pit = (samples < y[:, None]).mean(1)
+    pit =(samples < y[:, None]).mean(1)
     med = np.exp(np.median(samples, 1))
     rows = []
     for fam in FAMILIES + ['all']:
@@ -136,16 +146,33 @@ def main():
         h, _ = np.histogram(pit[mask], bins=10, range=(0, 1))
         r['pit_hist'] = json.dumps((h / max(1, mask.sum())).round(4).tolist())
         r['pit_ks'] = float(np.max(np.abs(np.sort(pit[mask]) - np.linspace(0, 1, mask.sum()))))
-        qv = np.array([qconf[f] for f in te.family.to_numpy()[mask]])
-        clo, chi = np.quantile(samples[mask], 0.05, 1) - qv, np.quantile(samples[mask], 0.95, 1) + qv
-        r['coverage90_conformal'] = float(np.mean((y[mask] >= clo) & (y[mask] <= chi)))
-        r['width_ln_conformal'] = float(np.mean(chi - clo))
+        for g, suffix in (('family', ''), ('none', '_global'), ('n_images', '_nimg'), ('pred_mu', '_predmu')):
+            qv = np.array([qgroup[g].get(str(k), qgroup['none']['0']) for k in groups_te[g][mask]])
+            clo, chi = np.quantile(samples[mask], 0.05, 1) - qv, np.quantile(samples[mask], 0.95, 1) + qv
+            r[f'coverage90_conformal{suffix}'] = float(np.mean((y[mask] >= clo) & (y[mask] <= chi)))
+            r[f'width_ln_conformal{suffix}'] = float(np.mean(chi - clo))
         rows.append(r)
     tag = a.input_set.replace("+", "_").replace("(", "").replace(")", "")
     pd.DataFrame(rows).to_csv(a.out_dir / f'npe_{a.scenario}_{tag}.csv', index=False)
     pd.DataFrame(dict(event_id=te.event_id, family=te.family, mu=te.mu, pred=med, lo=np.exp(np.quantile(samples, 0.05, 1)),
                       hi=np.exp(np.quantile(samples, 0.95, 1)), pit=pit, dl_true=te.dl_true, ln_dapp_a=te.gw_ln_dapp_a,
                       y_true=te.y_true)).to_parquet(a.out_dir / f'npe_predictions_{a.scenario}_{tag}.parquet', index=False)
+    # Response to an external mass sheet (lam = 1 - kappa_ext) applied to the fixed test systems.
+    msd = []
+    q_glob = qgroup['none']['0']
+    for lam in (0.9, 0.95, 1.0, 1.05, 1.1):
+        tt = mass_sheet_transform(te, lam)
+        xt, _, _ = standardise(tt[cols].to_numpy(float), m, s)
+        st = posterior_samples(flow, xt, a.device, n=400)
+        yt = np.log(tt.mu.to_numpy())
+        for fam in FAMILIES + ['all']:
+            mask = np.ones(len(te), bool) if fam == 'all' else (te.family.to_numpy() == fam)
+            mt = np.median(st[mask], 1)
+            cov = (yt[mask] >= np.quantile(st[mask], 0.05, 1) - q_glob) & (yt[mask] <= np.quantile(st[mask], 0.95, 1) + q_glob)
+            msd.append(dict(scenario=a.scenario, input_set=a.input_set, family=fam, method='NPE (NSF)', lam=lam,
+                            median_dln_pred=float(np.median(mt - np.log(med[mask]))),
+                            median_ln_bias=float(np.median(mt - yt[mask])), coverage90_conformal_global=float(cov.mean())))
+    pd.DataFrame(msd).to_csv(a.out_dir / f'npe_msd_{a.scenario}_{tag}.csv', index=False)
     print(json.dumps(dict(val_nll=val_nll, seconds=time.time() - t0, n_train=len(tr)), indent=1))
     print(pd.DataFrame(rows)[['family', 'mae', 'median_rel', 'coverage90', 'coverage90_conformal', 'coverage_68', 'pit_ks']].to_string())
 

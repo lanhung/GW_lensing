@@ -26,6 +26,34 @@ INPUT_SETS = {
     'Geometry+GW(rel)': GEO + ['gw_ln_mu_rel', 'gw_ln_abs_dt', 'gw_dt_sign', 'gw_rho_a', 'gw_rho_b'],
     'Full': GEO + GW + FOLLOWUP + COSMO,
 }
+# Ablations of the GW 'relative' inputs. |dt| (the clock) scales with the time-delay distance and the
+# SNRs with the absolute amplitude, so both carry distance-scale information and change under a
+# mass-sheet transformation; ln(mu_B/mu_A) and the arrival order do not ('ratio').
+GW_RATIO = ['gw_ln_mu_rel', 'gw_dt_sign']
+ABLATION_SETS = {
+    'Geometry+GW(rel)+FU': INPUT_SETS['Geometry+GW(rel)'] + FOLLOWUP,
+    'Geometry+GW(ratio)': GEO + GW_RATIO,
+    'Geometry+GW(ratio)+FU': GEO + GW_RATIO + FOLLOWUP,
+    'Geometry+GW(ratio+clock)+FU': GEO + GW_RATIO + ['gw_ln_abs_dt'] + FOLLOWUP,
+    'Geometry+GW(ratio+SNR)+FU': GEO + GW_RATIO + ['gw_rho_a', 'gw_rho_b'] + FOLLOWUP,
+}
+ALL_SETS = {**INPUT_SETS, **ABLATION_SETS}
+
+
+def mass_sheet_transform(d, lam):
+    """Apply an external-convergence mass-sheet transformation (lam = 1 - kappa_ext) to a feature table.
+
+    Image geometry, the relative magnification, the arrival order, redshifts and the lens velocity
+    dispersion are unchanged; mu -> mu / lam^2, dt -> lam dt, SNR -> SNR / lam and the apparent
+    distances -> lam D_app. The selection of the transformed population is not re-applied.
+    """
+    t = d.copy()
+    t['gw_ln_abs_dt'] = d.gw_ln_abs_dt + np.log(lam)
+    t['gw_rho_a'], t['gw_rho_b'] = d.gw_rho_a / lam, d.gw_rho_b / lam
+    t['gw_ln_dapp_a'], t['gw_ln_dapp_b'] = d.gw_ln_dapp_a + np.log(lam), d.gw_ln_dapp_b + np.log(lam)
+    t['gw_ln_mu_cosmo'] = d.gw_ln_mu_cosmo - 2 * np.log(lam)
+    t['mu'], t['mu_b'] = d.mu / lam ** 2, d.mu_b / lam ** 2
+    return t
 
 
 def build(df, scenario, sky='estimated'):
