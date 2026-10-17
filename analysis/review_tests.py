@@ -25,7 +25,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from analysis.benchmark import ALPHA, CQR, metrics, split  # noqa: E402
 from analysis.features import ALL_SETS, FAMILIES, distance_scale_transform, load, mass_sheet_transform  # noqa: E402
 
-ABLATION = ['Geometry', 'Geometry+FU', 'Geometry+GW(ratio)', 'Geometry+GW(rel)', 'Geometry+GW(ratio)+FU',
+ABLATION = ['GW', 'GW+z', 'Geometry', 'Geometry+FU', 'Geometry+GW(ratio)', 'Geometry+GW(rel)', 'Geometry+GW(ratio)+FU',
             'Geometry+GW(ratio+clock)+FU', 'Geometry+GW(ratio+SNR)+FU', 'Geometry+GW(rel)+FU', 'Full']
 MIXED = ['Geometry+GW(ratio)', 'Geometry+GW(ratio)+FU', 'Geometry+GW(rel)+FU']
 LAMBDAS = (0.9, 0.95, 1.0, 1.05, 1.1)
@@ -130,7 +130,7 @@ def main():
     p.add_argument('--data-dir', type=Path, default=Path('data/v2'))
     p.add_argument('--out-dir', type=Path, required=True)
     p.add_argument('--scenarios', nargs='+', default=['ET', 'O5'])
-    p.add_argument('--seeds', nargs='+', type=int, default=[0, 1, 2])
+    p.add_argument('--seeds', nargs='+', type=int, default=[0, 1, 2, 3, 4])
     p.add_argument('--max-per-family', type=int, default=60000)
     p.add_argument('--experiments', nargs='+', default=['ablation', 'mixed'])
     p.add_argument('--jobs', type=int, default=8)
@@ -155,6 +155,8 @@ def main():
         msd += [r for _, m in res for r in m]
         jobs = []
         for seed in (a.seeds if 'mixed' in a.experiments else []):
+            if seed not in a.seeds[:3]:
+                continue
             lab = split(data, seed)
             tr, ca, te = data[lab == 'train'], data[lab == 'cal'], data[lab == 'test']
             for name in MIXED:
