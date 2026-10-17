@@ -203,12 +203,15 @@ def gw_likelihood(row, scenario, seed):
     return JointLensedLikelihood(*likes), base, truth, duration, snrs
 
 
-def run_event(row, scenario, outdir, seed, nlive, npool, naccept):
+def run_event(row, scenario, outdir, seed, nlive, npool, naccept, known_sky=False):
     import bilby
+    from bilby.core.prior import DeltaFunction
     t0 = time.time()
     like, base, truth, duration, snrs = gw_likelihood(row, scenario, seed)
     priors = priors_for(truth)
-    label = f'{scenario}_{row.event_id}'
+    if known_sky:  # identified host: the sky position is known to sub-arcsecond precision
+        priors['ra'], priors['dec'] = DeltaFunction(truth['ra'], name='ra'), DeltaFunction(truth['dec'], name='dec')
+    label = f'{scenario}_{row.event_id}' + ('_knownsky' if known_sky else '')
     res = bilby.run_sampler(likelihood=like, priors=priors, sampler='dynesty', nlive=nlive, sample='acceptance-walk',
                             naccept=naccept, npool=npool, outdir=str(outdir), label=label, injection_parameters=None,
                             save='hdf5', plot=False, resume=True, check_point_delta_t=600,
@@ -217,10 +220,10 @@ def run_event(row, scenario, outdir, seed, nlive, npool, naccept):
     post['morse_n_a'] = discrete_morse(post.morse_a)
     post['morse_n_b'] = discrete_morse(post.morse_b)
     keep = ['chirp_mass', 'mass_ratio', 'chi_1', 'chi_2', 'ra', 'dec', 'psi', 'theta_jn', 'luminosity_distance',
-            'ln_mu_rel', 'delta_t', 'morse_n_a', 'morse_n_b']
-    post[keep].to_parquet(Path(outdir) / f'{label}_posterior.parquet', index=False)
+            'ln_mu_rel', 'delta_t', 'morse_n_a', 'morse_n_b', 'phase', 'geocent_time', 'log_likelihood']
+    post[[k for k in keep if k in post]].to_parquet(Path(outdir) / f'{label}_posterior.parquet', index=False)
     summary = dict(event_id=row.event_id, family=row.family, scenario=scenario, duration=duration, snr_a=snrs[0],
-                   snr_b=snrs[1], seconds=time.time() - t0, log_bayes_factor=float(res.log_bayes_factor),
+                   snr_b=snrs[1], known_sky=known_sky, seconds=time.time() - t0, log_bayes_factor=float(res.log_bayes_factor),
                    n_samples=len(post), **{f'true_{k}': float(v) for k, v in truth.items() if np.isscalar(v)})
     for k in ('ln_mu_rel', 'luminosity_distance', 'theta_jn', 'chirp_mass'):
         x = np.log(post[k]) if k == 'luminosity_distance' else post[k]
@@ -251,13 +254,15 @@ def main():
     p.add_argument('--naccept', type=int, default=60)
     p.add_argument('--npool', type=int, default=4)
     p.add_argument('--seed', type=int, default=1234)
+    p.add_argument('--known-sky', action='store_true', help='fix the sky position to the truth (identified host)')
     a = p.parse_args()
     a.outdir.mkdir(parents=True, exist_ok=True)
     cat = pd.read_parquet(a.catalogue).set_index('event_id', drop=False)
     for i, eid in enumerate(a.event_ids):
-        if (a.outdir / f'{a.scenario}_{eid}_summary.json').exists():
+        if (a.outdir / f'{a.scenario}_{eid}{"_knownsky" if a.known_sky else ""}_summary.json').exists():
             continue
-        s = run_event(cat.loc[eid], a.scenario, a.outdir, event_seed(a.seed, eid), a.nlive, a.npool, a.naccept)
+        s = run_event(cat.loc[eid], a.scenario, a.outdir, event_seed(a.seed, eid), a.nlive, a.npool, a.naccept,
+                      a.known_sky)
         print(json.dumps({k: s[k] for k in ('event_id', 'snr_a', 'snr_b', 'seconds', 'true_ln_mu_rel', 'ln_mu_rel_median', 'ln_mu_rel_sd')}), flush=True)
 
 

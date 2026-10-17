@@ -61,7 +61,7 @@ def load_events(pe_dir, data_dir):
                  pit_ln_d=float(np.mean(lnd < true_lnd)), true_ln_d=float(true_lnd),
                  model_ln_mu_rel=float(row[p + 'obs_ln_mu_rel']), model_ln_d=float(row[p + 'obs_ln_dapp_a']),
                  true_mu_a=float(row[p + 'true_mu_a']), n_images=int(row[p + 'geo_n_images']),
-                 cos_iota=float(row.true_cos_iota))
+                 cos_iota=float(row.true_cos_iota), known_sky=bool(s.get('known_sky', False)))
         rows.append(r)
     return pd.DataFrame(rows), cats
 
@@ -175,9 +175,10 @@ def main():
     a.out_dir.mkdir(parents=True, exist_ok=True)
     cal = json.loads(CAL.read_text())
     cal = dict(a=cal.get('a', cal.get('sigma_floor')), b=cal.get('b', cal.get('snr_coefficient')))
-    ev, cats = load_events(a.pe_dir, a.data_dir)
-    print(f'{len(ev)} PE events')
-    ev.to_csv(a.out_dir / 'pe_events.csv', index=False)
+    ev_all, cats = load_events(a.pe_dir, a.data_dir)
+    ev_all.to_csv(a.out_dir / 'pe_events.csv', index=False)
+    ev = ev_all[~ev_all.known_sky]  # known-sky reruns are compared separately
+    print(f'{len(ev)} PE events, {int(ev_all.known_sky.sum())} known-sky reruns')
     summ = summarise(ev, cats, cal)
     summ.to_csv(a.out_dir / 'pe_summary.csv', index=False)
     e2e = end_to_end(ev, cats, a.flow_dir)
