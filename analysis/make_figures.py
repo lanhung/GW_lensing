@@ -43,7 +43,7 @@ NPE_SETS = ['GW', 'Geometry', MAIN, 'Geometry+GW(rel)+FU', 'Full']
 def load_npe(npe_dir):
     if npe_dir is None or not npe_dir.exists():
         return None
-    parts = [pd.read_csv(f) for f in sorted(npe_dir.glob('npe_*.csv'))]
+    parts = [pd.read_csv(f) for f in sorted(npe_dir.glob('npe_[EO]*.csv'))]
     return pd.concat(parts, ignore_index=True) if parts else None
 
 
@@ -132,7 +132,7 @@ def fig_tail(pred, out, npe_dir=None):
         ax.set_xscale('log')
         ax.set_yscale('log')
         ax.set_xlabel(r'true $\mu_A$')
-        ax.set_title(name, fontsize=8)
+        ax.set_title(name.replace('NPE: ', 'NPE:\n') if name.startswith('NPE') else 'HistGB:\n' + name, fontsize=7)
         ax.grid(alpha=0.3, which='both')
     axes[0].set_ylabel('median relative error (per cent)')
     axes[0].legend(frameon=False)

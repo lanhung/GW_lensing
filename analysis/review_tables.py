@@ -72,7 +72,7 @@ def response_table(msd_h, msd_n, dsc_n):
                 r['npe_h'] = slope(d, 'h')
             rows.append(r)
     df = pd.DataFrame(rows)
-    lines = [r'\begin{tabular*}{\columnwidth}{@{\extracolsep{\fill}}llcccc@{}}', r'\toprule',
+    lines = [r'\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}llcccc@{}}', r'\toprule',
              r' & & \multicolumn{2}{c}{${\rm d}\ln\hat\mu/{\rm d}\ln\lambda$} & \multicolumn{2}{c}{${\rm d}\ln\hat\mu/{\rm d}\ln h$} \\',
              r'Scen. & Input set & HistGB & NPE & HistGB & NPE \\', r'\midrule']
     fmt = lambda v: '--' if pd.isna(v) else f'{v:+.2f}'  # noqa: E731
