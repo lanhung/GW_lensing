@@ -77,16 +77,30 @@ def image_parameters(p, image):
     return q
 
 
+# Relative binning is accurate only near the fiducial waveform. Far from it (e.g. at the prior edges, with
+# a large amplitude) it can return log-likelihood ratios ~1e9 that trap the sampler. The fiducial is the
+# injection, so no parameters can exceed its log-likelihood ratio by more than ~chi^2_d/2; above
+# RB_MARGIN the exact likelihood is evaluated instead.
+RB_MARGIN = 50.0
+
+
 class JointLensedLikelihood(bilby.Likelihood):
     """Product of two single-image likelihoods with shared source parameters."""
 
-    def __init__(self, like_a, like_b):
+    def __init__(self, like_a, like_b, exact=(None, None), ceilings=(np.inf, np.inf)):
         super().__init__()
         self.like_a, self.like_b = like_a, like_b
+        self.exact, self.ceilings = exact, ceilings
+
+    def _image(self, like, k, parameters):
+        q = image_parameters(parameters, 'ab'[k])
+        logl = like.log_likelihood_ratio(parameters=q)
+        if self.exact[k] is not None and not logl <= self.ceilings[k]:
+            logl = self.exact[k].log_likelihood_ratio(parameters=q)
+        return logl
 
     def log_likelihood_ratio(self, parameters=None):
-        return (self.like_a.log_likelihood_ratio(parameters=image_parameters(parameters, 'a'))
-                + self.like_b.log_likelihood_ratio(parameters=image_parameters(parameters, 'b')))
+        return self._image(self.like_a, 0, parameters) + self._image(self.like_b, 1, parameters)
 
     def noise_log_likelihood(self):
         return self.like_a.noise_log_likelihood() + self.like_b.noise_log_likelihood()
@@ -180,7 +194,7 @@ def gw_likelihood(row, scenario, seed):
     base, truth = event_parameters(row, scenario)
     duration = segment_duration(base['mass_1'], base['mass_2'], SCENARIO_FMIN[scenario])
     wf_args = dict(waveform_approximant=APPROXIMANT, reference_frequency=F_REF, minimum_frequency=SCENARIO_FMIN[scenario])
-    likes, snrs = [], []
+    likes, exact, ceilings, snrs = [], [], [], []
     for k, image in enumerate(('a', 'b')):
         p = image_parameters(dict(truth), image)
         start = p['geocent_time'] + 2.0 - duration
@@ -200,7 +214,9 @@ def gw_likelihood(row, scenario, seed):
         fid = dict(inj, chirp_mass=truth['chirp_mass'], mass_ratio=truth['mass_ratio'])
         likes.append(bilby.gw.likelihood.RelativeBinningGravitationalWaveTransient(
             interferometers=ifos, waveform_generator=gen, fiducial_parameters=fid, epsilon=0.025))
-    return JointLensedLikelihood(*likes), base, truth, duration, snrs
+        exact.append(bilby.gw.likelihood.GravitationalWaveTransient(interferometers=ifos, waveform_generator=inj_gen))
+        ceilings.append(likes[-1].log_likelihood_ratio(p) + RB_MARGIN)
+    return JointLensedLikelihood(*likes, exact=exact, ceilings=ceilings), base, truth, duration, snrs
 
 
 def run_event(row, scenario, outdir, seed, nlive, npool, naccept, known_sky=False):
