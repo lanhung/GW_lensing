@@ -115,19 +115,22 @@ def main():
     sc = np.maximum(lo_ca - yca, yca - hi_ca)
     # Conformal groups. 'family' uses the true lens family (a diagnostic: unknown for real events);
     # 'n_images' (observed image multiplicity) and 'pred_mu' (quintiles of the predicted ln mu, edges
-    # fixed on the calibration set) use observed quantities only.
+    # fixed on the calibration set) use observed quantities only; 'epl_only' calibrates every event on
+    # the EPL+shear calibration events, a conservative choice that needs no family label.
     med_ca = np.median(sca, 1)
     edges = np.quantile(med_ca, [0.2, 0.4, 0.6, 0.8])
     groups_ca = dict(family=ca.family.to_numpy(), n_images=np.minimum(ca.geo_n_images.to_numpy(), 4).astype(int),
-                     pred_mu=np.digitize(med_ca, edges), none=np.zeros(len(ca), int))
+                     pred_mu=np.digitize(med_ca, edges), none=np.zeros(len(ca), int),
+                     epl_only=np.where(ca.family.to_numpy() == 'EPL_shear', 0, -1))
     groups_te = dict(family=te.family.to_numpy(), n_images=np.minimum(te.geo_n_images.to_numpy(), 4).astype(int),
-                     pred_mu=np.digitize(np.median(samples, 1), edges), none=np.zeros(len(te), int))
+                     pred_mu=np.digitize(np.median(samples, 1), edges), none=np.zeros(len(te), int),
+                     epl_only=np.zeros(len(te), int))
 
     def conformal(v):
         v = np.sort(v)
         k = int(np.ceil((len(v) + 1) * 0.9))
         return float(v[min(k, len(v)) - 1]) if len(v) else np.inf
-    qgroup = {g: {str(k): conformal(sc[groups_ca[g] == k]) for k in np.unique(groups_ca[g])} for g in groups_ca}
+    qgroup = {g: {str(k): conformal(sc[groups_ca[g] == k]) for k in np.unique(groups_ca[g]) if k != -1} for g in groups_ca}
     qconf = qgroup['family']
     ck = a.out_dir / f'flow_{a.scenario}_{a.input_set.replace("+", "_").replace("(", "").replace(")", "")}.pt'
     saved = torch.load(ck, weights_only=False)
@@ -146,7 +149,8 @@ def main():
         h, _ = np.histogram(pit[mask], bins=10, range=(0, 1))
         r['pit_hist'] = json.dumps((h / max(1, mask.sum())).round(4).tolist())
         r['pit_ks'] = float(np.max(np.abs(np.sort(pit[mask]) - np.linspace(0, 1, mask.sum()))))
-        for g, suffix in (('family', ''), ('none', '_global'), ('n_images', '_nimg'), ('pred_mu', '_predmu')):
+        for g, suffix in (('family', ''), ('none', '_global'), ('n_images', '_nimg'), ('pred_mu', '_predmu'),
+                          ('epl_only', '_epl')):
             qv = np.array([qgroup[g].get(str(k), qgroup['none']['0']) for k in groups_te[g][mask]])
             clo, chi = np.quantile(samples[mask], 0.05, 1) - qv, np.quantile(samples[mask], 0.95, 1) + qv
             r[f'coverage90_conformal{suffix}'] = float(np.mean((y[mask] >= clo) & (y[mask] <= chi)))

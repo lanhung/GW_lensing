@@ -4,9 +4,11 @@ ablation  in-family HistGB-CQR for input sets that separate the dimensionless GW
           (relative magnification, arrival order) from the clock |dt| and the absolute SNRs, both
           of which carry distance-scale information; plus a prior-only baseline that ignores the
           event data. The seed-0 models are also applied to the test systems after an external
-          mass-sheet transformation (lam = 1 - kappa_ext), which shows how each estimator responds.
+          mass-sheet transformation (lam = 1 - kappa_ext) and after rescaling all distances at fixed
+          redshift (h, as for a different Hubble constant), which shows how each estimator responds.
 mixed     one model for all families with conformal calibration that is global, by true family
-          (diagnostic only), by observed image multiplicity, or by quintile of the predicted mu.
+          (diagnostic only), by observed image multiplicity, by quintile of the predicted mu, or
+          on the EPL+shear calibration events only (a conservative choice without family labels).
 
 Coverage is reported with Wilson 68 per cent binomial intervals.
 """
@@ -21,7 +23,7 @@ from joblib import Parallel, delayed
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from analysis.benchmark import ALPHA, CQR, metrics, split  # noqa: E402
-from analysis.features import ALL_SETS, FAMILIES, load, mass_sheet_transform  # noqa: E402
+from analysis.features import ALL_SETS, FAMILIES, distance_scale_transform, load, mass_sheet_transform  # noqa: E402
 
 ABLATION = ['Geometry', 'Geometry+FU', 'Geometry+GW(ratio)', 'Geometry+GW(rel)', 'Geometry+GW(ratio)+FU',
             'Geometry+GW(ratio+clock)+FU', 'Geometry+GW(ratio+SNR)+FU', 'Geometry+GW(rel)+FU', 'Full']
@@ -78,10 +80,15 @@ def ablation_fit(tr, ca, te, name, seed, tag, do_msd):
             tt = mass_sheet_transform(te, lam)
             p2, l2, h2, _, _ = m.predict(tt)
             mu2 = tt.mu.to_numpy()
-            msd.append(dict(tag, input_set=name, method='HistGB-CQR', lam=lam,
+            msd.append(dict(tag, input_set=name, method='HistGB-CQR', transform='mass_sheet', lam=lam,
                             median_dln_pred=float(np.median(np.log(p2 / pred))),
                             median_ln_bias=float(np.median(np.log(p2 / mu2))),
                             **coverage_row(mu2, l2, h2)))
+            tt = distance_scale_transform(te, lam)
+            p2, l2, h2, _, _ = m.predict(tt)
+            msd.append(dict(tag, input_set=name, method='HistGB-CQR', transform='distance_scale', lam=lam,
+                            median_dln_pred=float(np.median(np.log(p2 / pred))),
+                            median_ln_bias=float(np.median(np.log(p2 / mu))), **coverage_row(mu, l2, h2)))
     return rows, msd
 
 
@@ -97,8 +104,10 @@ def mixed_fit(tr, ca, te, name, seed, tag, pred_bins=5):
     g_t = dict(global_=np.zeros(len(te), int), true_family=te.family.to_numpy(),
                n_images=np.minimum(te.geo_n_images.to_numpy(), 4).astype(int), pred_mu=np.digitize(med_t, edges))
     rows = []
+    g_c['epl_only'] = np.where(ca.family.to_numpy() == 'EPL_shear', 0, -1)
+    g_t['epl_only'] = np.zeros(len(te), int)
     for g in g_c:
-        qd = {k: conformal_q(s_c[g_c[g] == k]) for k in np.unique(g_c[g])}
+        qd = {k: conformal_q(s_c[g_c[g] == k]) for k in np.unique(g_c[g]) if k != -1}
         q_all = conformal_q(s_c)
         q = np.array([qd.get(k, q_all) for k in g_t[g]])
         lo, hi = np.exp(lo_t - q), np.exp(hi_t + q)
@@ -123,6 +132,7 @@ def main():
     p.add_argument('--scenarios', nargs='+', default=['ET', 'O5'])
     p.add_argument('--seeds', nargs='+', type=int, default=[0, 1, 2])
     p.add_argument('--max-per-family', type=int, default=60000)
+    p.add_argument('--experiments', nargs='+', default=['ablation', 'mixed'])
     p.add_argument('--jobs', type=int, default=8)
     p.add_argument('--threads', type=int, default=4)
     a = p.parse_args()
@@ -132,7 +142,7 @@ def main():
     for scen in a.scenarios:
         data = load(a.data_dir, scen, max_per_family=a.max_per_family, seed=1)
         jobs = []
-        for fam in FAMILIES:
+        for fam in (FAMILIES if 'ablation' in a.experiments else []):
             d = data[data.family == fam].reset_index(drop=True)
             for seed in a.seeds:
                 lab = split(d, seed)
@@ -144,7 +154,7 @@ def main():
         abl += [r for rows, _ in res for r in rows]
         msd += [r for _, m in res for r in m]
         jobs = []
-        for seed in a.seeds:
+        for seed in (a.seeds if 'mixed' in a.experiments else []):
             lab = split(data, seed)
             tr, ca, te = data[lab == 'train'], data[lab == 'cal'], data[lab == 'test']
             for name in MIXED:
@@ -153,10 +163,12 @@ def main():
         for df, f in ((abl, 'ablation.csv'), (msd, 'msd.csv'), (mix, 'mixed_calibration.csv')):
             pd.DataFrame(df).to_csv(a.out_dir / f, index=False)
         print(scen, 'done', flush=True)
+    if not abl:
+        return
     t = pd.DataFrame(abl).groupby(['scenario', 'input_set', 'family'], sort=False).median_rel.mean().unstack()
     print((100 * t).round(1).to_string())
     m = pd.DataFrame(msd)
-    print(m[m.lam.isin([0.9, 1.1])].groupby(['scenario', 'input_set', 'lam']).median_dln_pred.mean().unstack().round(3).to_string())
+    print(m[m.lam.isin([0.9, 1.1])].groupby(['scenario', 'transform', 'input_set', 'lam']).median_dln_pred.mean().unstack().round(3).to_string())
 
 
 if __name__ == '__main__':
