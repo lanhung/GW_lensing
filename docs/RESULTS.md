@@ -57,3 +57,37 @@ error dominates).
 ## v1 benchmark after removing the fixed-centre leak
 
 Geometry MAE 0.193 → 0.270; full 0.207 → 0.239; SIS Bayesian baseline 0.243 (see `CHANGES.md`).
+
+## Joint PE and Bayesian GW+EM (2026-10-18)
+
+120 systems (15 per family and scenario), IMRPhenomXHM injections in Gaussian noise, bilby/dynesty
+(nlive 150, naccept 30) with relative binning; ET analysed with free and with host (known) sky.
+`analysis/pe_analysis.py`, `analysis/gwem_analysis.py`; coverages of 40–60 systems carry binomial
+errors of 0.04–0.06.
+
+| GW-only PE | N | cov90 ln(mu_B/mu_A) | cov90 ln D_A | PE/model sd ln mu_rel | PE/model sd ln D_A | Morse dn identified |
+| --- | --- | --- | --- | --- | --- | --- |
+| ET, known sky | 60 | 0.87 | 0.83 | 0.41 | 0.44 | 1.00 |
+| ET, free sky | 60 | 0.67 | 0.63 | 0.71 | 0.52 | 0.82 |
+| O5, free sky | 60 | 0.92 | 0.88 | 0.91 | 0.67 | 0.98 |
+
+Free-sky ET (single site) is not converged at nlive 150: median sky offset 56 deg, wrong modes.
+
+Absolute magnification mu_A (median relative error [coverage]); scale-free (no cosmology) unless noted,
+ET two-stage uses known-sky PE:
+
+| Analysis | ET | O5 |
+| --- | --- | --- |
+| Full strain + EM (free sky, N=40) | 9.6% [0.80] | 14.9% [0.88] |
+| Two-stage | 8.1% [0.80] | 13.7% [0.90] |
+| Two-stage, EPL+shear model for all | 16.2% [0.87] | 20.6% [0.80] |
+| … + sigma_kext 0.025 | 15.9% [0.85] | 21.4% [0.80] |
+| … + sigma_kext 0.025, LCDM | 7.3% [0.88] | 9.8% [0.93] |
+| Two-stage, GW-image astrometry 0.03" | 8.9% [0.85] | 9.5% [0.75] |
+| Two-stage, GW-image astrometry 0.1" | 17.9% [0.70] | 18.7% [0.66] |
+| NPE Geometry+GW(ratio)+FU, SNR-model ratio | 10.8% [0.85] | 17.8% [0.87] |
+| NPE Geometry+GW(ratio)+FU, joint-PE ratio | 10.5% [0.85] | 13.8% [0.87] |
+
+Two-stage versus full on identical noise (80 systems): median |shift| 0.15 sigma (ET), 0.05 sigma (O5);
+10% / 5% shift by more than 1 sigma; width ratio 1.02. The large ET shifts come from free-sky PE in a
+wrong sky mode. O5_EPL_shear-7777-0012558 has no GW+EM input (catalogue replay not exact).

@@ -80,6 +80,32 @@ PY=python scripts/run_gwem_posthoc.sh inputs/gwem results/pe results/gwem_postho
 By default this runs four configurations: the true family and EPL+shear without a cosmology,
 EPL+shear with ΛCDM and `sigma_kext = 0.025`, and EPL+shear without a cosmology but with
 `sigma_kext = 0.025`.
+Each entry of `CONFIGS` is `cosmology:sigma_kext:lens_model[:sigma_img_gw]`; the paper also uses
+`free:0:same:0.03 free:0:same:0.1` for the astrometry test. Known-sky GW posteriors
+(`*_knownsky_posterior.parquet`) are written to directories with the suffix `_ks`. To split the
+task list over several hosts, give each host a disjoint set of residues, e.g. `SHARD=0,1/10` on
+one host and `SHARD=2,3/10` on the next; a final run without `SHARD` on the host that holds all
+outputs fills any gaps, because finished tasks are skipped.
+
+## Analysis
+
+```bash
+python analysis/pe_analysis.py --pe-dir results/pe --out-dir results/pe_analysis \
+       --flow-dir results/v2_review_npe2 --flow-name Geometry_GWratio_FU --figure results/pe_analysis/fig_pe.pdf
+python analysis/gwem_analysis.py --figure results/gwem_analysis/fig_gwem.pdf
+```
+
+`pe_analysis.py` compares the joint-PE posteriors with the summary model (coverage, PIT, width
+ratios, Morse-index identification) for free- and known-sky runs, and feeds the PE relative
+magnification into the scale-free NPE. `gwem_analysis.py` summarises the full and two-stage
+GW+EM runs per configuration and compares them with each other (matched noise) and with the NPE.
+
+## Relative-binning fallback
+
+Where the relative-binning log-likelihood exceeds the fiducial (injection) log-likelihood by
+more than 50, the binning approximation has failed and `joint_pe` evaluates the exact
+likelihood for that point. The injection and relative-binning generators need separate
+`waveform_arguments` dicts, because relative binning writes its bin edges into its own.
 
 ## Reproducibility note
 
