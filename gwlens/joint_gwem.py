@@ -25,7 +25,9 @@ Cosmology options
     lcdm  the simulation cosmology with the observed redshifts: d_L(z_s) makes the GW apparent
           distance a direct magnification measurement, and the millisecond-precise delay fixes
           (1 - kappa_ext) Delta phi; kappa_ext is then derived from Delta t (requires
-          sigma_kext > 0).
+          sigma_kext > 0). With --h0-free, h_rel = H0 / H0_sim is sampled (flat in [0.5, 1.5]) and
+          all distances scale as 1/h_rel at fixed redshift. Both the delay and the apparent distance
+          then depend on (1 - kappa_ext) / h_rel, so the kappa_ext prior sets the per-event floor.
 
 Sub-commands
     prepare  write self-contained per-event JSON inputs from gwlens.catalogue catalogues (the
@@ -229,17 +231,18 @@ class Combiner:
         if cosmology == 'lcdm' and sigma_kext <= 0:
             raise ValueError('cosmology=lcdm needs sigma_kext > 0 (kappa_ext is derived from the delay)')
 
-    def image_pair(self, ev, pair, delta_t, kappa_ext=0.0):
+    def image_pair(self, ev, pair, delta_t, kappa_ext=0.0, h_rel=1.0):
         """GW-side quantities of an assignment, plus the log prior weight of derived kappa_ext."""
         i, j = self.pairs[pair]
         dphi = ev['fermat'][j] - ev['fermat'][i]
         log_w = 0.0
+        ddt = self.ddt / h_rel
         if self.cosmology == 'lcdm':
-            one_minus_k = delta_t / (self.ddt * dphi)
+            one_minus_k = delta_t / (ddt * dphi)
             if not one_minus_k > 0:
                 return None
             kappa_ext = 1 - one_minus_k
-            log_w = -0.5 * (kappa_ext / self.sigma_kext) ** 2 - np.log(self.ddt * abs(dphi))
+            log_w = -0.5 * (kappa_ext / self.sigma_kext) ** 2 - np.log(ddt * abs(dphi))
         elif np.sign(dphi) != np.sign(delta_t):
             return None  # arrival order must agree with the Fermat potential
         mu_a = abs(ev['mu'][i]) / (1 - kappa_ext) ** 2
@@ -247,7 +250,7 @@ class Combiner:
         out = dict(i=i, j=j, mu_a=mu_a, mu_b=mu_b, ln_mu_rel=float(np.log(mu_b / mu_a)), n_a=float(ev['morse'][i]),
                    n_b=float(ev['morse'][j]), kappa_ext=float(kappa_ext), log_w=float(log_w), dphi=float(dphi))
         if self.cosmology == 'lcdm':
-            out['d_a'] = self.d_l / np.sqrt(mu_a)
+            out['d_a'] = self.d_l / h_rel / np.sqrt(mu_a)
         return out
 
 
@@ -304,7 +307,7 @@ def make_posthoc_likelihood(lens, comb, gw, sample_kext):
             k = p.get('kappa_ext', 0.0) if sample_kext else 0.0
             out = []
             for pair in range(len(comb.pairs)):
-                g = comb.image_pair(ev, pair, gw.delta_t, k)
+                g = comb.image_pair(ev, pair, gw.delta_t, k, p.get('h_rel', 1.0))
                 if g is not None:
                     out.append((g, ev['log_l'] + g['log_w'] + gw.log_l(g, comb.cosmology == 'lcdm')))
             return ev, out
@@ -332,7 +335,8 @@ def make_full_likelihood(lens, comb, gw_like, sample_kext):
             if ev is None:
                 return None, None
             pair = int(np.clip(np.floor(p.get('pair_index', 0.0)), 0, len(comb.pairs) - 1))
-            g = comb.image_pair(ev, pair, p['delta_t'], p.get('kappa_ext', 0.0) if sample_kext else 0.0)
+            g = comb.image_pair(ev, pair, p['delta_t'], p.get('kappa_ext', 0.0) if sample_kext else 0.0,
+                                p.get('h_rel', 1.0))
             return ev, g
 
         def log_likelihood_ratio(self, parameters=None):
@@ -368,7 +372,7 @@ def derived(post, lens, comb, delta_t_col, gw, sample_kext, rng):
         for pair in range(len(comb.pairs)):
             if 'pair_index' in p and pair != int(np.clip(np.floor(p['pair_index']), 0, len(comb.pairs) - 1)):
                 continue
-            g = comb.image_pair(ev, pair, dt, k) if ev is not None else None
+            g = comb.image_pair(ev, pair, dt, k, p.get('h_rel', 1.0)) if ev is not None else None
             if g is not None:
                 ll = ev['log_l'] + g['log_w'] + (gw.log_l(g, comb.cosmology == 'lcdm') if gw is not None else 0.0)
                 cands.append((g, ll))
@@ -397,6 +401,10 @@ def summarise(post, event, extra):
     s['covered90'] = bool(s['ln_mu_a_q05'] <= y <= s['ln_mu_a_q95'])
     if 'gamma' in post:
         s.update(true_gamma=t['gamma'], gamma_median=float(post.gamma.median()), gamma_sd=float(post.gamma.std()))
+    if 'h_rel' in post:
+        h = post.h_rel.to_numpy()
+        s.update(h_rel_median=float(np.median(h)), h_rel_sd=float(np.std(h)), h_rel_q05=float(np.quantile(h, 0.05)),
+                 h_rel_q95=float(np.quantile(h, 0.95)), h_rel_pit=float(np.mean(h < 1.0)))
     return s
 
 
@@ -413,11 +421,16 @@ def _setup(event, a):
     if sample_kext:
         from bilby.core.prior import TruncatedGaussian
         priors['kappa_ext'] = TruncatedGaussian(0.0, a.sigma_kext, -0.5, 0.5, name='kappa_ext')
+    if a.h0_free:
+        if a.cosmology != 'lcdm':
+            raise ValueError('--h0-free needs --cosmology lcdm')
+        from bilby.core.prior import Uniform
+        priors['h_rel'] = Uniform(0.5, 1.5, name='h_rel', latex_label=r'$H_0/H_0^{\rm sim}$')
     return model, lens, comb, priors, sample_kext
 
 
 def _label(event, a, mode):
-    tag = f"_ast{a.sigma_img_gw:g}" if a.sigma_img_gw else ''
+    tag = (f"_ast{a.sigma_img_gw:g}" if a.sigma_img_gw else '') + ('_h0' if a.h0_free else '')
     return f"{event['scenario']}_{event['event_id']}_{mode}_{a.cosmology}_{a.lens_model or event['family']}{tag}"
 
 
@@ -502,6 +515,8 @@ def main():
         q.add_argument('--sigma-img-gw', type=float, default=0.0,
                        help='astrometry test: positional error (arcsec) of the GW-source images, with matching extra '
                             'scatter added to their observed positions (0: the simulated 0.01 arcsec)')
+        q.add_argument('--h0-free', action='store_true',
+                       help='with --cosmology lcdm: sample h_rel = H0 / H0_sim, flat in [0.5, 1.5]')
         q.add_argument('--sampler', default='dynesty')
         q.add_argument('--nlive', type=int, default=500 if name == 'posthoc' else 300)
         q.add_argument('--naccept', type=int, default=30)

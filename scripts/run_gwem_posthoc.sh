@@ -3,6 +3,8 @@
 # configurations. Usage: scripts/run_gwem_posthoc.sh INPUT_DIR PE_DIR OUT_DIR [PAR]
 # CONFIGS entries are cosmology:sigma_kext:lens_model[:sigma_img_gw]; lens_model 'same' = true family.
 # Known-sky GW posteriors (*_knownsky_posterior.parquet) go to output directories with the suffix _ks.
+# EXTRA_ARGS are passed to every run and TAG is appended to labels and output directories, e.g.
+# EXTRA_ARGS=--h0-free TAG=_h0 for H0 inference (which joint_gwem labels with the suffix _h0).
 # SHARD="r1,r2,.../N" keeps only the tasks whose checksum modulo N is one of the listed residues,
 # so that several hosts can share the task list without overlap.
 set -euo pipefail
@@ -27,10 +29,10 @@ done | xargs -P "$PAR" -L 1 bash -c '
   fam=$(echo $base | cut -d_ -f2- | sed "s/-[0-9]*-[0-9]*$//")
   [ "$model" = same ] && model=$fam
   ast=${ast:-0}; tag=""; [ "$ast" != 0 ] && tag=_ast$ast
-  label=${base}_posthoc_${cosmo}_${model}${tag}
-  [ "$ks" = 1 ] && tag=${tag}_ks
+  label=${base}_posthoc_${cosmo}_${model}${tag}'"${TAG:-}"'
+  tag=${tag}'"${TAG:-}"'; [ "$ks" = 1 ] && tag=${tag}_ks
   out="'"$OUT"'/${cosmo}_k${sk}_${model}${tag}"
   [ -f "$out/${label}_summary.json" ] && exit 0
   nice -n 10 '"$PY"' -m gwlens.joint_gwem posthoc --event "'"$IN"'/$base.json" --gw-posterior "$post" --out-dir "$out" \
-    --cosmology $cosmo --sigma-kext $sk --lens-model $model --sigma-img-gw $ast > "'"$OUT"'/logs/${label}_k${sk}${tag}.log" 2>&1 || echo "FAILED $label"
+    --cosmology $cosmo --sigma-kext $sk --lens-model $model --sigma-img-gw $ast '"${EXTRA_ARGS:-}"' > "'"$OUT"'/logs/${label}_k${sk}${tag}.log" 2>&1 || echo "FAILED $label"
 '
