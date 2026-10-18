@@ -19,6 +19,17 @@ from analysis.features import FAMILIES, load  # noqa: E402
 
 FAM_LABEL = {'SIS': 'SIS', 'SIE': 'SIE', 'SIE_shear': 'SIE+shear', 'EPL_shear': 'EPL+shear'}
 MAIN = 'Geometry+GW(ratio)'  # scale-free main input set
+# Names shown in figures: the observables each set contains ("mu ratio" = GW magnification ratio and arrival order).
+DISPLAY = {'GW': 'GW only', 'GW+z': 'GW + $z$', 'Geometry': 'Geometry', 'Geometry+FU': r'Geometry + $z,\sigma_v$',
+           'Geometry+GW(ratio)': r'Geometry + $\mu$ ratio', 'Geometry+GW(ratio)+FU': r'Geometry + $\mu$ ratio + $z,\sigma_v$',
+           'Geometry+GW(rel)': r'Geometry + $\mu$ ratio + $\Delta t$, SNR',
+           'Geometry+GW(rel)+FU': r'Geometry + $\mu$ ratio + $\Delta t$, SNR + $z,\sigma_v$', 'Full': 'All observables',
+           'SIS analytic (geometry)': 'SIS analytic (geometry)', 'SIS analytic (GW relative)': r'SIS analytic ($\mu$ ratio)',
+           'Known z_s + cosmology': r'$z_s$ + cosmology'}
+
+
+def show(name):
+    return DISPLAY.get(name, name)
 SET_ORDER = ['GW', 'GW+z', 'Geometry', 'Geometry+FU', MAIN, 'Geometry+GW(rel)', 'Full']
 BASE_ORDER = ['SIS analytic (GW relative)', 'SIS analytic (geometry)', 'Known z_s + cosmology']
 COLORS = {'SIS': '#2a6f97', 'SIE': '#c8553d', 'SIE_shear': '#588157', 'EPL_shear': '#8d6a9f'}
@@ -98,11 +109,11 @@ def fig_inputs(met, out):
             ax.bar(x + (k - 1.5) * w, 100 * v['mean'], w, yerr=100 * v['std'].fillna(0), color=COLORS[f], label=FAM_LABEL[f], capsize=1, lw=0)
         ax.set_yscale('log')
         ax.set_xticks(x)
-        ax.set_xticklabels([n.replace('SIS analytic', 'SIS anal.').replace('Known z_s + cosmology', 'z$_s$+cosmology') for n in names], rotation=40, ha='right')
+        ax.set_xticklabels([show(n) for n in names], rotation=40, ha='right', fontsize=6)
         ax.axvline(len(BASE_ORDER) - 0.5, color='k', lw=0.5, ls=':')
         ax.set_title(f'{scen} scenario')
         ax.grid(axis='y', alpha=0.3, which='both')
-    axes[0].set_ylabel(r'median $|\hat\mu-\mu|/\mu$ (per cent)')
+    axes[0].set_ylabel(r'median $|\hat\mu-\mu|/\mu$ (%)')
     axes[0].legend(ncol=2, frameon=False)
     label(axes)
     fig.savefig(out / 'fig_inputs.pdf')
@@ -132,9 +143,11 @@ def fig_tail(pred, out, npe_dir=None):
         ax.set_xscale('log')
         ax.set_yscale('log')
         ax.set_xlabel(r'true $\mu_A$')
-        ax.set_title(name.replace('NPE: ', 'NPE:\n') if name.startswith('NPE') else 'HistGB:\n' + name, fontsize=7)
+        t = show(name[5:]) if name.startswith('NPE') else show(name)
+        t = t.replace(' + $\\Delta t$', '\n+ $\\Delta t$')  # long names on two lines
+        ax.set_title(('NPE: ' if name.startswith('NPE') else 'HistGB: ') + t, fontsize=6)
         ax.grid(alpha=0.3, which='both')
-    axes[0].set_ylabel('median relative error (per cent)')
+    axes[0].set_ylabel('median relative error (%)')
     axes[0].legend(frameon=False)
     label(axes)
     fig.savefig(out / 'fig_tail.pdf')
@@ -159,7 +172,7 @@ def fig_coverage(met, npe, cond, out, mixed=None):
             ax.errorbar(x + (k - 1) * 0.18, v['mean'], v['std'].fillna(0), fmt='o', color=c, label=lab, ms=3, capsize=2)
     if npe is not None:
         v = npe.set_index('family').reindex(FAMILIES)
-        ax.plot(x + 0.26, v.coverage90, 's', mfc='none', color='#c8553d', ms=3, label='NPE, raw')
+        ax.plot(x + 0.26, v.coverage90, 's', mfc='none', color='#c8553d', ms=3, label='NPE, uncorrected')
         if 'coverage90_conformal' in v:
             ax.plot(x + 0.39, v.coverage90_conformal, 's', color='#c8553d', ms=3, label='NPE, true family')
     ax.axhline(0.9, color='k', lw=0.6, ls='--')
@@ -229,7 +242,7 @@ def fig_distance(pred, out):
         q = p[p.input_set == name]
         dhat = np.exp(q.ln_dapp_a) * np.sqrt(q.pred)
         e = np.log(dhat / q.dl_true)
-        ax.hist(e, bins=np.linspace(-1.2, 1.2, 80), histtype='step', density=True, ls=ls, label=name, color='k' if name != 'GW' else '#c8553d')
+        ax.hist(e, bins=np.linspace(-1.2, 1.2, 80), histtype='step', density=True, ls=ls, label=show(name), color='k' if name != 'GW' else '#c8553d')
     q = p[p.input_set == 'Full']
     e0 = np.log(np.exp(q.ln_dapp_a) * np.sqrt(q.mu) / q.dl_true)
     ax.hist(e0, bins=np.linspace(-1.2, 1.2, 80), histtype='stepfilled', density=True, alpha=0.25, color='#2a6f97', label='true $\\mu$ (GW amplitude error only)')
@@ -247,7 +260,7 @@ def fig_learning(met, out):
     fig, ax = plt.subplots(figsize=(COL, 2.2))
     for (fam, name), q in g.groupby(['train_family', 'input_set']):
         q = q.groupby('n_train').median_rel.mean()
-        ax.plot(q.index, 100 * q.values, 'o-' if name == 'Geometry' else 's--', ms=3, color=COLORS[fam], label=f'{FAM_LABEL[fam]}, {name}')
+        ax.plot(q.index, 100 * q.values, 'o-' if name == 'Geometry' else 's--', ms=3, color=COLORS[fam], label=f'{FAM_LABEL[fam]}, {show(name)}')
     ax.set_xscale('log')
     ax.set_xlabel('training events')
     ax.set_ylabel('median rel. error (%)')

@@ -124,9 +124,9 @@ def degrade_astrometry(event, sigma_img_gw, seed):
 class LensForward:
     """Lens-model likelihood of the image positions and derived image properties."""
 
-    def __init__(self, model, em):
+    def __init__(self, model, em, exact_positions=False):
         from lenstronomy.LensModel.lens_model import LensModel
-        self.model = model
+        self.model, self.exact_positions = model, exact_positions
         names = ['SIS'] if model == 'SIS' else ['EPL_NUMBA'] + ([] if model == 'SIE' else ['SHEAR'])
         self.lm = LensModel(names)
         self.x, self.y = np.asarray(em['x'], float), np.asarray(em['y'], float)
@@ -155,6 +155,40 @@ class LensForward:
         a11, a12, a21, a22 = 1 - fxx, -fxy, -fyx, 1 - fyy
         return a11, a12, a21, a22, a11 * a22 - a12 * a21
 
+    def _exact_images(self, p, kw, sx, sy, W11, W12, W22, detW):
+        """Image-plane likelihood without linearisation, for an explicitly sampled source position.
+
+        The source position is beta = beta_lin + L u, where beta_lin and the Cholesky factor L of its
+        covariance come from the linearised likelihood and u = (u_x, u_y) is sampled uniformly; log|det L|
+        makes the implied prior flat in beta. Each model image is found by Newton iteration of the lens
+        equation from the observed position, and the likelihood compares model and observed positions.
+        """
+        c11, c12, c22 = W22 / detW, -W12 / detW, W11 / detW
+        l11 = np.sqrt(c11)
+        l21 = c12 / l11
+        l22 = np.sqrt(max(c22 - l21 ** 2, 1e-300))
+        bx, by = sx + l11 * p['u_x'], sy + l21 * p['u_x'] + l22 * p['u_y']
+        xs, ys = self.x.copy(), self.y.copy()
+        for _ in range(40):
+            ax, ay = self.lm.alpha(xs, ys, kw)
+            rx, ry = xs - ax - bx, ys - ay - by
+            if np.max(np.abs(rx)) < 1e-10 and np.max(np.abs(ry)) < 1e-10:
+                break
+            a11, a12, a21, a22, det = self._jacobian(xs, ys, kw)
+            if np.any(np.abs(det) < 1e-12):
+                return None
+            xs, ys = xs - (a22 * rx - a12 * ry) / det, ys - (-a21 * rx + a11 * ry) / det
+        else:
+            return None
+        if not (np.all(np.isfinite(xs)) and np.all(np.isfinite(ys))):
+            return None
+        sep = np.hypot(xs[:, None] - xs[None, :], ys[:, None] - ys[None, :]) + np.eye(len(xs))
+        if np.min(sep) < 1e-4:
+            return None  # two observed images mapped onto the same model image
+        chi2 = float(np.sum(((xs - self.x) ** 2 + (ys - self.y) ** 2) / self.s2))
+        log_l = -0.5 * chi2 - np.sum(np.log(TWO_PI * self.s2)) + np.log(l11 * l22)
+        return log_l, xs, ys, bx, by
+
     def evaluate(self, p):
         """Log-likelihood of the EM data and the model image properties (None if invalid)."""
         kw = self.kwargs(p)
@@ -175,8 +209,14 @@ class LensForward:
         dx, dy = bx - sx, by - sy
         chi2 = float(np.sum(w11 * dx ** 2 + 2 * w12 * dx * dy + w22 * dy ** 2))
         log_l = -0.5 * chi2 - 0.5 * np.log(detW) + np.log(TWO_PI) - np.sum(np.log(TWO_PI * self.s2))
-        # One Newton step to the model image positions, then image properties there.
-        xs, ys = x - (m11 * dx + m12 * dy), y - (m21 * dx + m22 * dy)
+        if self.exact_positions:
+            sol = self._exact_images(p, kw, sx, sy, W11, W12, W22, detW)
+            if sol is None:
+                return None
+            log_l, xs, ys, sx, sy = sol
+        else:
+            # One Newton step to the model image positions, then image properties there.
+            xs, ys = x - (m11 * dx + m12 * dy), y - (m21 * dx + m22 * dy)
         a11, a12, a21, a22, det = self._jacobian(xs, ys, kw)
         kappa = 1 - 0.5 * (a11 + a22)
         morse = np.where(det < 0, 0.5, np.where(kappa > 1, 1.0, 0.0))
@@ -194,10 +234,13 @@ class LensForward:
                     theta_e=kw[0]['theta_E'])
 
 
-def lens_priors(model, em):
+def lens_priors(model, em, exact_positions=False):
     import bilby
     from bilby.core.prior import Gaussian, Interped, TruncatedGaussian, Uniform
     pr = bilby.core.prior.PriorDict()
+    if exact_positions:  # source position relative to its linearised estimate, in units of its uncertainty
+        pr['u_x'] = Uniform(-8.0, 8.0, name='u_x')
+        pr['u_y'] = Uniform(-8.0, 8.0, name='u_y')
     s = np.linspace(100.0, 400.0, 2000)
     sstar, alpha, beta = 161.0, 2.32, 2.67
     pdf = (s / sstar) ** alpha * np.exp(-(s / sstar) ** beta) / s * s ** 4
@@ -414,9 +457,9 @@ def summarise(post, event, extra):
 def _setup(event, a):
     em = event['em']
     model = a.lens_model or event['family']
-    lens = LensForward(model, em)
+    lens = LensForward(model, em, a.exact_positions)
     comb = Combiner(em, a.cosmology, a.sigma_kext, a.assignment)
-    priors = lens_priors(model, em)
+    priors = lens_priors(model, em, a.exact_positions)
     sample_kext = a.cosmology == 'free' and a.sigma_kext > 0
     if sample_kext:
         from bilby.core.prior import TruncatedGaussian
@@ -430,7 +473,8 @@ def _setup(event, a):
 
 
 def _label(event, a, mode):
-    tag = (f"_ast{a.sigma_img_gw:g}" if a.sigma_img_gw else '') + ('_h0' if a.h0_free else '')
+    tag = (f"_ast{a.sigma_img_gw:g}" if a.sigma_img_gw else '') + ('_h0' if a.h0_free else '') + \
+        ('_xpos' if a.exact_positions else '')
     return f"{event['scenario']}_{event['event_id']}_{mode}_{a.cosmology}_{a.lens_model or event['family']}{tag}"
 
 
@@ -515,6 +559,8 @@ def main():
         q.add_argument('--sigma-img-gw', type=float, default=0.0,
                        help='astrometry test: positional error (arcsec) of the GW-source images, with matching extra '
                             'scatter added to their observed positions (0: the simulated 0.01 arcsec)')
+        q.add_argument('--exact-positions', action='store_true',
+                       help='image-position likelihood without linearisation (source position sampled)')
         q.add_argument('--h0-free', action='store_true',
                        help='with --cosmology lcdm: sample h_rel = H0 / H0_sim, flat in [0.5, 1.5]')
         q.add_argument('--sampler', default='dynesty')
