@@ -8,9 +8,11 @@ SIE_shear  SIE plus external shear
 EPL_shear  elliptical power law (free radial slope) plus external shear
 
 Sources are drawn uniformly in area inside a disk of radius ``r_max * theta_E`` around the lens
-centre; keeping only multiply imaged configurations therefore weights each lens by its
-multiple-image cross-section. Each image carries its signed magnification, convergence, Morse
-index and arrival-time delay.
+centre and redrawn (up to ``max_tries`` times) until the configuration is multiply imaged, so the
+source is uniform over the multiple-image region of each lens and practically every lens is kept:
+the population is weighted by lens size through the sigma_v^4 factor of the velocity-dispersion
+distribution, but not by the dependence of the cross-section on ellipticity, shear or slope. Each
+image carries its signed magnification, convergence, Morse index and arrival-time delay.
 """
 import numpy as np
 

@@ -79,14 +79,21 @@ def _jsonable(v):
     return v
 
 
-def prepare_event(catalogue, event_id, scenario):
-    """Self-contained event description: catalogue row, EM data and truths."""
+def prepare_event(catalogue, event_id, scenario, any_pair=False):
+    """Self-contained event description: catalogue row, EM data and truths.
+
+    With any_pair, a system that is not a selected pair in the scenario is also accepted, with its two
+    most magnified images standing in for the GW pair (for lens-only calibration tests).
+    """
     from .catalogue import replay
     row = replay(catalogue, event_id)
-    if not row.get(f'{scenario}__selected'):
-        raise ValueError(f'{event_id} is not a selected {scenario} pair')
     em = row.pop('em')
-    a_i, b_i = em['pairs'][scenario]
+    if row.get(f'{scenario}__selected'):
+        a_i, b_i = em['pairs'][scenario]
+    elif any_pair:
+        a_i, b_i = (int(k) for k in np.argsort(-np.abs(np.asarray(em['mu'])))[:2])
+    else:
+        raise ValueError(f'{event_id} is not a selected {scenario} pair')
     keep = [k for k in range(len(em['x'])) if em['bright'][k] or k in (a_i, b_i)]
     idx = {k: n for n, k in enumerate(keep)}
     data = dict(x=[em['x'][k] for k in keep], y=[em['y'][k] for k in keep], gw_a=idx[a_i], gw_b=idx[b_i],
@@ -300,6 +307,17 @@ class Combiner:
         return out
 
 
+class NoGW:
+    """Lens-only analysis: no GW amplitude information; only the true arrival order of the pair is used."""
+
+    def __init__(self, event):
+        t = event['truth']['t']
+        self.delta_t = float(t[event['em']['gw_b']] - t[event['em']['gw_a']])
+
+    def log_l(self, g, use_distance):
+        return 0.0
+
+
 class GWSummary:
     """GW likelihood in (ln mu_rel, ln D_A, n_A, n_B) summarised from a joint_pe posterior.
 
@@ -493,9 +511,9 @@ def run_posthoc(event, gw_post, a):
     import bilby
     t0 = time.time()
     model, lens, comb, priors, sample_kext = _setup(event, a)
-    gw = GWSummary(gw_post)
+    gw = NoGW(event) if gw_post is None else GWSummary(gw_post)
     like = make_posthoc_likelihood(lens, comb, gw, sample_kext)
-    label = _label(event, a, 'posthoc')
+    label = _label(event, a, 'posthoc' if gw_post is not None else 'emonly')
     res = bilby.run_sampler(likelihood=like, priors=priors, outdir=str(a.out_dir), label=label, **_sampler_kwargs(a))
     post = derived(res.posterior, lens, comb, None, gw, sample_kext, np.random.default_rng(a.seed))
     post.to_parquet(a.out_dir / f'{label}_posterior.parquet', index=False)
@@ -549,6 +567,8 @@ def main():
     pp.add_argument('--scenario', required=True)
     pp.add_argument('--event-ids', nargs='+', required=True)
     pp.add_argument('--out-dir', type=Path, required=True)
+    pp.add_argument('--any-pair', action='store_true',
+                    help='also accept systems that are not selected pairs (two most magnified images as the pair)')
     for name in ('posthoc', 'full'):
         q = sub.add_parser(name)
         q.add_argument('--event', type=Path, required=True, help='JSON from the prepare step')
@@ -574,13 +594,14 @@ def main():
         q.add_argument('--npool', type=int, default=1 if name == 'posthoc' else 16)
         q.add_argument('--seed', type=int, default=1234)
         if name == 'posthoc':
-            q.add_argument('--gw-posterior', type=Path, required=True, help='posterior parquet from gwlens.joint_pe')
+            q.add_argument('--gw-posterior', type=Path, required=True,
+                           help="posterior parquet from gwlens.joint_pe, or 'none' for a lens-only (EM) analysis")
     a = p.parse_args()
     a.out_dir.mkdir(parents=True, exist_ok=True)
     if a.cmd == 'prepare':
         cat = Path(a.catalogue)
         for eid in a.event_ids:
-            ev = prepare_event(cat, eid, a.scenario)
+            ev = prepare_event(cat, eid, a.scenario, a.any_pair)
             (a.out_dir / f'{a.scenario}_{eid}.json').write_text(json.dumps(ev))
             print(a.out_dir / f'{a.scenario}_{eid}.json', len(ev['em']['x']), 'images')
         return
@@ -589,7 +610,7 @@ def main():
         from .joint_pe import event_seed
         event = degrade_astrometry(event, a.sigma_img_gw, event_seed(a.seed + 1, event['event_id']))
     if a.cmd == 'posthoc':
-        s = run_posthoc(event, pd.read_parquet(a.gw_posterior), a)
+        s = run_posthoc(event, None if str(a.gw_posterior) == 'none' else pd.read_parquet(a.gw_posterior), a)
     else:
         s = run_full(event, a)
     print(json.dumps({k: s[k] for k in ('event_id', 'true_mu_a', 'ln_mu_a_median', 'ln_mu_a_sd', 'rel_err', 'covered90', 'seconds')}))
