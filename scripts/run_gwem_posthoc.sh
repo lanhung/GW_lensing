@@ -17,17 +17,19 @@ for post in "$PE"/*/*_posterior.parquet; do
   base=$(basename "$post" _posterior.parquet)        # e.g. ET_SIS-7777-0019701 or ET_SIS-7777-0019701_knownsky
   ks=0; [ "${base%_knownsky}" != "$base" ] && ks=1 && base=${base%_knownsky}
   [ -f "$IN/$base.json" ] || continue
+  fam=$(echo $base | cut -d_ -f2- | sed "s/-[0-9]*-[0-9]*$//")
   for c in $CONFIGS; do
+    IFS=: read cosmo sk model ast <<< "$c"
+    [ "$model" = same ] && model=$fam
+    c=$cosmo:$sk:$model${ast:+:$ast}      # 'same' resolved, so that duplicate fits are listed once
     if [ -n "${SHARD:-}" ]; then
       h=$(printf '%s' "$base $c $ks" | cksum | cut -d' ' -f1)
       [[ ",${SHARD%/*}," == *",$((h % ${SHARD#*/})),"* ]] || continue
     fi
     echo "$base $post $c $ks"
   done
-done | xargs -P "$PAR" -L 1 bash -c '
+done | awk '!seen[$0]++' | xargs -P "$PAR" -L 1 bash -c '
   base=$0; post=$1; IFS=: read cosmo sk model ast <<< "$2"; ks=$3
-  fam=$(echo $base | cut -d_ -f2- | sed "s/-[0-9]*-[0-9]*$//")
-  [ "$model" = same ] && model=$fam
   ast=${ast:-0}; tag=""; [ "$ast" != 0 ] && tag=_ast$ast
   label=${base}_posthoc_${cosmo}_${model}${tag}'"${TAG:-}"'
   tag=${tag}'"${TAG:-}"'; [ "$ks" = 1 ] && tag=${tag}_ks

@@ -27,17 +27,22 @@ FAMILIES = ['SIS', 'SIE', 'SIE_shear', 'EPL_shear']
 PRIMARY_SKY = {'ET': 'known', 'O5': 'free'}
 
 
-def load(full_dir, posthoc_dir):
+def load(full_dir, posthoc_dirs):
     rows = []
     for f in Path(full_dir).glob('*_summary.json'):
         rows.append(dict(json.loads(f.read_text()), sky='free', config='full'))
-    for f in Path(posthoc_dir).glob('*/*_summary.json'):
-        # directory = <cosmology>_k<sigma_kext>_<lens model>[_ast<sigma>][_ks]; the EPL+shear directories
-        # also hold the EPL+shear family analysed with its own model
-        cosmo, kext, model, ast, ks = re.fullmatch(r'(free|lcdm)_k([0-9.]+)_(\w+?)(?:_ast([0-9.]+))?(_ks)?',
-                                                   f.parent.name).groups()
+    for f in (f for d in posthoc_dirs for f in Path(d).glob('*/*_summary.json')):
+        # directory = <cosmology>_k<sigma_kext>_<lens model>[_ast<sigma>][_h0][_xpos][_sn][_ks] (the tags of
+        # scripts/run_gwem_posthoc.sh); the EPL+shear directories also hold the EPL+shear family analysed with
+        # its own model. Free-H0 runs are analysed separately.
+        m = re.fullmatch(r'(free|lcdm)_k([0-9.]+)_(\w+?)(?:_ast([0-9.]+))?(_h0)?(_xpos)?(?:_sn)?(_ks)?', f.parent.name)
+        cosmo, kext, model, ast, h0, xpos, ks = m.groups()
+        if h0:
+            continue
         s = json.loads(f.read_text())
-        if ast:
+        if xpos:
+            cfgs = ['two-stage exact' + (f' ast{float(ast):g}' if ast else '')]
+        elif ast:
             cfgs = [f'two-stage ast{float(ast):g}']
         elif float(kext) or cosmo == 'lcdm':
             cfgs = [f"two-stage EPL_shear kext{float(kext):g}" + (' lcdm' if cosmo == 'lcdm' else '')]
@@ -100,7 +105,7 @@ def primary(d):
 
 def table(acc):
     """LaTeX table: median relative error (per cent) and coverage per scenario for each analysis."""
-    rows = [('full', 'free', 'Full (strain + EM), free sky'),
+    rows = [('full', 'free', 'Full strain + EM fit, free sky'),
             ('two-stage', 'free', 'Two-stage, free-sky GW PE'),
             ('two-stage', 'known', 'Two-stage, known-sky GW PE'),
             ('two-stage EPL_shear', None, r'\quad EPL+shear model'),
@@ -108,6 +113,9 @@ def table(acc):
             ('two-stage EPL_shear kext0.025 lcdm', None, r'\quad EPL+shear, $\sigma_{\kappa}=0.025$, $\Lambda$CDM'),
             ('two-stage ast0.03', None, r'\quad GW-image astrometry 0.03 arcsec'),
             ('two-stage ast0.1', None, r'\quad GW-image astrometry 0.1 arcsec'),
+            ('two-stage exact', None, r'\quad exact image-position likelihood'),
+            ('two-stage exact ast0.03', None, r'\quad GW-image astrometry 0.03 arcsec, exact likelihood'),
+            ('two-stage exact ast0.1', None, r'\quad GW-image astrometry 0.1 arcsec, exact likelihood'),
             ('NPE SNR model', None, r'NPE, SNR-model $\mu_B/\mu_A$'),
             ('NPE joint PE', None, r'NPE, joint-PE $\mu_B/\mu_A$')]
     a = acc.set_index(['scenario', 'sky', 'config'])
@@ -183,7 +191,8 @@ def figure(d, j, out):
 def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument('--full-dir', type=Path, default=Path('results/gwem_full'))
-    p.add_argument('--posthoc-dir', type=Path, default=Path('results/gwem_posthoc'))
+    p.add_argument('--posthoc-dir', type=Path, nargs='+', default=[Path('results/gwem_posthoc')],
+                   help='two-stage output directories, e.g. the standard and the exact-position runs')
     p.add_argument('--npe-events', type=Path, default=Path('results/pe_analysis/pe_end_to_end_events.csv'))
     p.add_argument('--out-dir', type=Path, default=Path('results/gwem_analysis'))
     p.add_argument('--figure', type=Path, default=None)

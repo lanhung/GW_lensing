@@ -5,11 +5,11 @@ MAX_TRIES times, after which the whole lens is redrawn by gwlens.catalogue) unti
 least two solutions. For a given lens the source density is therefore 1 / A_mult over its multiple-image
 region, with A_mult = a * pi * (R_MAX * theta_E)^2 and a the accepted fraction of the disk, and the lens
 is kept with probability 1 - (1 - a)^MAX_TRIES. The fraction a rises steeply with the radial slope (for
-EPL+shear with q = 0.75 about 0.09 at gamma = 1.8, 0.30 at 2.0 and 0.84 at 2.2), because steeper profiles produce a
-second, faint image near the centre for sources far outside the Einstein radius. An inference with a flat
-source-position prior that is not normalised per lens therefore weights each lens model by A_mult and
-favours steep slopes. log_weight returns ln[(1 - (1 - a)^MAX_TRIES) / A_mult], the term that makes the
-lens-model posterior consistent with the simulated population.
+EPL+shear with q = 0.75 about 0.09 at gamma = 1.8, 0.30 at 2.0 and 0.84 at 2.2), because steeper
+profiles produce a second, faint image near the centre for sources far outside the Einstein radius.
+An inference with a flat source-position prior that is not normalised per lens therefore weights each
+lens model by A_mult and favours steep slopes. log_weight returns ln[(1 - (1 - a)^MAX_TRIES) / A_mult],
+the term that makes the lens-model posterior consistent with the simulated population.
 
 The table of a (source_area.npz next to this file) is computed by scripts/source_area_table.py with the
 solver call and acceptance test of lenses.solve, on a fixed lattice of source positions.
