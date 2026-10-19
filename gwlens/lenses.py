@@ -20,6 +20,7 @@ from .population import ARCSEC
 
 FAMILIES = ['SIS', 'SIE', 'SIE_shear', 'EPL_shear']
 R_MAX = {'SIS': 1.0, 'SIE': 1.6, 'SIE_shear': 1.8, 'EPL_shear': 1.8}
+MAX_TRIES = 60
 
 _SOLVERS = {}
 
@@ -77,7 +78,7 @@ def _sis_images(theta_e, bx, by):
     return x, yy, mu, kappa, fermat
 
 
-def solve(rng, family, theta_e, shape, max_tries=60):
+def solve(rng, family, theta_e, shape, max_tries=MAX_TRIES):
     """Draw a source position and return the multiply imaged solution (lens centred at 0)."""
     rmax = R_MAX[family] * theta_e
     for _ in range(max_tries):

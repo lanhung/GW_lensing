@@ -26,9 +26,12 @@ corresponding code paths are given in brackets.
 * Families: SIS; SIE (axis ratio q ~ N(0.75, 0.15) truncated to [0.35, 0.99], SLACS-like);
   SIE + external shear (|gamma| log-normal, median 0.05, capped at 0.25); EPL + shear (slope
   gamma' ~ N(2.08, 0.15), Auger et al. 2010).
-* Source positions uniform in area inside 1.0–1.8 theta_E; only multiply imaged configurations
-  are kept, so each lens enters in proportion to its multiple-image cross-section and quads appear
-  at their natural rate.
+* Source positions uniform in area inside 1.0–1.8 theta_E, redrawn (up to 60 times, then the lens
+  is redrawn) until the configuration is multiply imaged. The source is therefore uniform over the
+  multiple-image region of each lens and quads appear at their natural rate for that lens, but the
+  lenses are not weighted by how the area of that region depends on their shape and slope (only by
+  sigma^4). The Bayesian lens analyses must normalise the source prior accordingly
+  (`gwlens/source_area.py`, `--source-norm`).
 * Images are solved with lenstronomy (EPL_NUMBA); spurious roots are removed with a lens-equation
   residual test. Each image stores signed magnification, convergence, Morse index and Fermat delay.
 

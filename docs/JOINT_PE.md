@@ -29,8 +29,12 @@ images are refined by one Newton step, and the image properties are evaluated th
   samples the assignment as a discrete parameter (`full`).
 * Priors match the simulated lens populations: SLACS-like `q`, log-normal shear, `gamma'` ~
   N(2.08, 0.15), the sigma^4-weighted SDSS velocity-dispersion function, and a flat source
-  position. Detection selection effects are *not* included in the Bayesian prior; they are
-  included implicitly in the NPE training set.
+  position. With `--source-norm` the source prior is normalised per lens as in the simulation
+  (uniform over the multiple-image region, `gwlens/source_area.py`); without it the flat prior
+  weights each lens model by the area of that region, which grows steeply with the EPL slope
+  (about 3x from gamma' = 2.0 to 2.2) and biases gamma' high and |mu_A| low. Detection selection
+  effects are *not* included in the Bayesian prior; they are included implicitly in the NPE
+  training set.
 
 `posthoc` is exact up to the summary of the GW likelihood: a Gaussian in `(ln mu_rel, ln D_A)`
 fitted to the `joint_pe` posterior with importance weights that remove its priors, times the

@@ -11,7 +11,10 @@ in the linearised image-plane likelihood
 
 where beta_i is image i traced back to the source plane and A_i the lensing Jacobian. Predicted
 image positions are refined by one Newton step before the magnifications, Morse indices and
-Fermat potentials are evaluated. The GW data enter through
+Fermat potentials are evaluated. The flat source-position prior is not normalised per lens unless
+--source-norm is given, which adds ln[P_keep / A_mult] (gwlens.source_area) so that, as in the
+simulation, the source is uniform over the multiple-image region of each lens; without it, lens
+models with large multiple-image regions (steep EPL slopes) are favoured. The GW data enter through
 
     ln(mu_B / mu_A)          (amplitude ratio),
     Morse indices n_A, n_B   (waveform phase; identified with higher modes),
@@ -59,6 +62,7 @@ import numpy as np
 import pandas as pd
 
 from . import population as pop
+from . import source_area
 
 LENS_MODELS = ['SIS', 'SIE', 'SIE_shear', 'EPL_shear']
 TWO_PI = 2 * np.pi
@@ -133,9 +137,9 @@ def degrade_astrometry(event, sigma_img_gw, seed):
 class LensForward:
     """Lens-model likelihood of the image positions and derived image properties."""
 
-    def __init__(self, model, em, exact_positions=False):
+    def __init__(self, model, em, exact_positions=False, source_norm=False):
         from lenstronomy.LensModel.lens_model import LensModel
-        self.model, self.exact_positions = model, exact_positions
+        self.model, self.exact_positions, self.source_norm = model, exact_positions, source_norm
         names = ['SIS'] if model == 'SIS' else ['EPL_NUMBA'] + ([] if model == 'SIE' else ['SHEAR'])
         self.lm = LensModel(names)
         self.x, self.y = np.asarray(em['x'], float), np.asarray(em['y'], float)
@@ -239,6 +243,11 @@ class LensForward:
                 log_l += -0.5 * (dpa / em['sigma_pa_light']) ** 2
         sv = p['sigma_v']
         log_l += -0.5 * ((em['sigma_v'] - sv) / (em['sigma_v_frac'] * sv)) ** 2 - np.log(sv)
+        if self.source_norm:  # source uniform over the multiple-image region of each simulated lens
+            g = p.get('ln_gamma_ext')
+            log_l += float(source_area.log_weight(self.model, kw[0]['theta_E'], p.get('q', 1.0), p.get('phi_q', 0.0),
+                                                  0.0 if g is None else np.exp(g), p.get('phi_ext', 0.0),
+                                                  p.get('gamma', 2.0)))
         return dict(log_l=float(log_l), mu=1 / det, morse=morse, fermat=np.asarray(fermat), beta=(sx, sy),
                     theta_e=kw[0]['theta_E'])
 
@@ -478,7 +487,7 @@ def summarise(post, event, extra):
 def _setup(event, a):
     em = event['em']
     model = a.lens_model or event['family']
-    lens = LensForward(model, em, a.exact_positions)
+    lens = LensForward(model, em, a.exact_positions, a.source_norm)
     comb = Combiner(em, a.cosmology, a.sigma_kext, a.assignment)
     priors = lens_priors(model, em, a.exact_positions, a.gamma_prior)
     sample_kext = a.cosmology == 'free' and a.sigma_kext > 0
@@ -495,7 +504,8 @@ def _setup(event, a):
 
 def _label(event, a, mode):
     tag = (f"_ast{a.sigma_img_gw:g}" if a.sigma_img_gw else '') + ('_h0' if a.h0_free else '') + \
-        ('_xpos' if a.exact_positions else '') + (f"_g{a.gamma_prior[0]:g}" if a.gamma_prior else '')
+        ('_xpos' if a.exact_positions else '') + (f"_g{a.gamma_prior[0]:g}" if a.gamma_prior else '') + \
+        ('_sn' if a.source_norm else '')
     return f"{event['scenario']}_{event['event_id']}_{mode}_{a.cosmology}_{a.lens_model or event['family']}{tag}"
 
 
@@ -584,6 +594,9 @@ def main():
                             'scatter added to their observed positions (0: the simulated 0.01 arcsec)')
         q.add_argument('--exact-positions', action='store_true',
                        help='image-position likelihood without linearisation (source position sampled)')
+        q.add_argument('--source-norm', action='store_true',
+                       help='normalise the source-position prior per lens as in the simulation (uniform over the '
+                            'multiple-image region; gwlens.source_area)')
         q.add_argument('--gamma-prior', type=float, nargs=2, metavar=('MEAN', 'SD'), default=None,
                        help='Gaussian prior on the EPL slope, truncated to [1.6, 2.6] (default: 2.08 0.15)')
         q.add_argument('--h0-free', action='store_true',
