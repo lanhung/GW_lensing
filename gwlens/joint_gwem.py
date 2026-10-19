@@ -28,6 +28,8 @@ Cosmology options
           sigma_kext > 0). With --h0-free, h_rel = H0 / H0_sim is sampled (flat in [0.5, 1.5]) and
           all distances scale as 1/h_rel at fixed redshift. Both the delay and the apparent distance
           then depend on (1 - kappa_ext) / h_rel, so the kappa_ext prior sets the per-event floor.
+          The EPL slope is degenerate with h_rel; --gamma-prior MEAN SD replaces the intrinsic
+          population prior N(2.08, 0.15) by, e.g., the slope distribution of detected systems.
 
 Sub-commands
     prepare  write self-contained per-event JSON inputs from gwlens.catalogue catalogues (the
@@ -234,7 +236,7 @@ class LensForward:
                     theta_e=kw[0]['theta_E'])
 
 
-def lens_priors(model, em, exact_positions=False):
+def lens_priors(model, em, exact_positions=False, gamma_prior=None):
     import bilby
     from bilby.core.prior import Gaussian, Interped, TruncatedGaussian, Uniform
     pr = bilby.core.prior.PriorDict()
@@ -254,7 +256,8 @@ def lens_priors(model, em, exact_positions=False):
         pr['ln_gamma_ext'] = TruncatedGaussian(np.log(0.05), 0.6, np.log(1e-3), np.log(0.25), name='ln_gamma_ext')
         pr['phi_ext'] = Uniform(0, np.pi, boundary='periodic', name='phi_ext')
     if model == 'EPL_shear':
-        pr['gamma'] = TruncatedGaussian(2.08, 0.15, 1.6, 2.6, name='gamma')
+        g_mu, g_sd = gamma_prior or (2.08, 0.15)
+        pr['gamma'] = TruncatedGaussian(g_mu, g_sd, 1.6, 2.6, name='gamma')
     return pr
 
 
@@ -459,7 +462,7 @@ def _setup(event, a):
     model = a.lens_model or event['family']
     lens = LensForward(model, em, a.exact_positions)
     comb = Combiner(em, a.cosmology, a.sigma_kext, a.assignment)
-    priors = lens_priors(model, em, a.exact_positions)
+    priors = lens_priors(model, em, a.exact_positions, a.gamma_prior)
     sample_kext = a.cosmology == 'free' and a.sigma_kext > 0
     if sample_kext:
         from bilby.core.prior import TruncatedGaussian
@@ -474,7 +477,7 @@ def _setup(event, a):
 
 def _label(event, a, mode):
     tag = (f"_ast{a.sigma_img_gw:g}" if a.sigma_img_gw else '') + ('_h0' if a.h0_free else '') + \
-        ('_xpos' if a.exact_positions else '')
+        ('_xpos' if a.exact_positions else '') + (f"_g{a.gamma_prior[0]:g}" if a.gamma_prior else '')
     return f"{event['scenario']}_{event['event_id']}_{mode}_{a.cosmology}_{a.lens_model or event['family']}{tag}"
 
 
@@ -561,6 +564,8 @@ def main():
                             'scatter added to their observed positions (0: the simulated 0.01 arcsec)')
         q.add_argument('--exact-positions', action='store_true',
                        help='image-position likelihood without linearisation (source position sampled)')
+        q.add_argument('--gamma-prior', type=float, nargs=2, metavar=('MEAN', 'SD'), default=None,
+                       help='Gaussian prior on the EPL slope, truncated to [1.6, 2.6] (default: 2.08 0.15)')
         q.add_argument('--h0-free', action='store_true',
                        help='with --cosmology lcdm: sample h_rel = H0 / H0_sim, flat in [0.5, 1.5]')
         q.add_argument('--sampler', default='dynesty')
