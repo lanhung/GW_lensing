@@ -131,6 +131,23 @@ def degrade_astrometry(event, sigma_img_gw, seed):
     return dict(event, em=em)
 
 
+def inject_kext(event, gw, sigma, seed):
+    """Two-stage data of the same system with an external convergence k ~ N(0, sigma) along the line of sight.
+
+    By the mass-sheet transformation the image positions and the magnification ratio are unchanged, while the
+    magnifications scale by (1 - k)^-2 and the GW apparent distance and the delay by 1 - k; the summary of the GW
+    posterior and the truth are rescaled accordingly. The velocity dispersion is left unchanged, as in the lens
+    model, which relates it to the Einstein radius without the sheet.
+    """
+    k = float(np.random.default_rng(seed).normal(0, sigma))
+    gw.mean = gw.mean + np.array([0.0, np.log1p(-k)])
+    gw.delta_t *= 1 - k
+    t = dict(event['truth'], kappa_ext=k)
+    t['mu_a'] /= (1 - k) ** 2
+    t['mu_b'] /= (1 - k) ** 2
+    return dict(event, truth=t), k
+
+
 # ---------------------------------------------------------------------------
 # Lens model
 # ---------------------------------------------------------------------------
@@ -332,8 +349,10 @@ class GWSummary:
 
     The posterior is divided by the joint_pe priors (uniform in ln mu_rel, p(D_A) ~ D_A^2,
     uniform Morse indices): a Gaussian in (ln mu_rel, ln D_A) fitted with importance weights
-    D_A^-3 times the posterior probabilities of the nine Morse combinations.
+    D_A^-3 times the posterior probabilities of the nine Morse combinations. With use_distance False
+    the apparent distance is ignored (delay-only analysis in LCDM).
     """
+    use_distance = True
 
     def __init__(self, post):
         x = np.column_stack([post.ln_mu_rel, np.log(post.luminosity_distance)])
@@ -354,7 +373,7 @@ class GWSummary:
 
     def log_l(self, g, use_distance):
         ll = self.ln_frac[(g['n_a'], g['n_b'])]
-        if use_distance:
+        if use_distance and self.use_distance:
             d = np.array([g['ln_mu_rel'], np.log(g['d_a'])]) - self.mean
             return ll - 0.5 * d @ self.icov @ d - 0.5 * np.log(np.linalg.det(TWO_PI * self.cov))
         return ll - 0.5 * ((g['ln_mu_rel'] - self.mean[0]) / self.sd_rel) ** 2 - np.log(np.sqrt(TWO_PI) * self.sd_rel)
@@ -504,6 +523,7 @@ def _setup(event, a):
 
 def _label(event, a, mode):
     tag = (f"_ast{a.sigma_img_gw:g}" if a.sigma_img_gw else '') + ('_h0' if a.h0_free else '') + \
+        ('_ki' if getattr(a, 'inject_kext', 0) else '') + ('_nod' if getattr(a, 'no_gw_distance', False) else '') + \
         ('_xpos' if a.exact_positions else '') + (f"_g{a.gamma_prior[0]:g}" if a.gamma_prior else '') + \
         ('_sn' if a.source_norm else '')
     return f"{event['scenario']}_{event['event_id']}_{mode}_{a.cosmology}_{a.lens_model or event['family']}{tag}"
@@ -522,6 +542,12 @@ def run_posthoc(event, gw_post, a):
     t0 = time.time()
     model, lens, comb, priors, sample_kext = _setup(event, a)
     gw = NoGW(event) if gw_post is None else GWSummary(gw_post)
+    extra = {}
+    if a.inject_kext:
+        from .joint_pe import event_seed
+        event, extra['kext_injected'] = inject_kext(event, gw, a.inject_kext, event_seed(a.seed + 2, event['event_id']))
+    if a.no_gw_distance:
+        gw.use_distance = False
     like = make_posthoc_likelihood(lens, comb, gw, sample_kext)
     label = _label(event, a, 'posthoc' if gw_post is not None else 'emonly')
     res = bilby.run_sampler(likelihood=like, priors=priors, outdir=str(a.out_dir), label=label, **_sampler_kwargs(a))
@@ -529,7 +555,7 @@ def run_posthoc(event, gw_post, a):
     post.to_parquet(a.out_dir / f'{label}_posterior.parquet', index=False)
     s = summarise(post, event, dict(mode='posthoc', cosmology=a.cosmology, lens_model=model, sigma_kext=a.sigma_kext,
                                     sigma_img_gw=a.sigma_img_gw, assignment=a.assignment, seconds=time.time() - t0,
-                                    log_evidence=float(res.log_evidence)))
+                                    log_evidence=float(res.log_evidence), **extra))
     (a.out_dir / f'{label}_summary.json').write_text(json.dumps(s, indent=1))
     return s
 
@@ -607,6 +633,10 @@ def main():
         q.add_argument('--npool', type=int, default=1 if name == 'posthoc' else 16)
         q.add_argument('--seed', type=int, default=1234)
         if name == 'posthoc':
+            q.add_argument('--inject-kext', type=float, default=0.0, metavar='SIGMA',
+                           help='rescale the data as for an external convergence drawn from N(0, SIGMA) (gwlens.joint_gwem.inject_kext)')
+            q.add_argument('--no-gw-distance', action='store_true',
+                           help='with --cosmology lcdm: ignore the GW apparent distance (delay-only analysis)')
             q.add_argument('--gw-posterior', type=Path, required=True,
                            help="posterior parquet from gwlens.joint_pe, or 'none' for a lens-only (EM) analysis")
     a = p.parse_args()
