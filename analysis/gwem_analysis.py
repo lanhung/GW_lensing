@@ -103,34 +103,43 @@ def primary(d):
     return d[d.sky == d.scenario.map(PRIMARY_SKY)]
 
 
-def table(acc):
-    """LaTeX table: median relative error (per cent) and coverage per scenario for each analysis."""
-    rows = [('full', 'free', 'Full strain + EM fit, free sky'),
-            ('two-stage', 'free', 'Two-stage, free-sky GW PE'),
-            ('two-stage', 'known', 'Two-stage, known-sky GW PE'),
-            ('two-stage EPL_shear', None, r'\quad EPL+shear model'),
-            ('two-stage EPL_shear kext0.025', None, r'\quad EPL+shear, $\sigma_{\kappa}=0.025$'),
-            ('two-stage EPL_shear kext0.025 lcdm', None, r'\quad EPL+shear, $\sigma_{\kappa}=0.025$, $\Lambda$CDM'),
-            ('two-stage ast0.03', None, r'\quad GW-image astrometry 0.03 arcsec'),
-            ('two-stage ast0.1', None, r'\quad GW-image astrometry 0.1 arcsec'),
-            ('two-stage exact', None, r'\quad exact image-position likelihood'),
-            ('two-stage exact ast0.03', None, r'\quad GW-image astrometry 0.03 arcsec, exact likelihood'),
-            ('two-stage exact ast0.1', None, r'\quad GW-image astrometry 0.1 arcsec, exact likelihood'),
+TESTS = [('full', 'free', 'Full strain + EM fit, free sky'),
+         ('two-stage', 'free', 'Two-stage, free-sky GW PE'),
+         ('two-stage', 'known', 'Two-stage, known-sky GW PE'),
+         ('two-stage EPL_shear', None, r'\quad EPL+shear model'),
+         ('two-stage EPL_shear kext0.025', None, r'\quad EPL+shear, $\sigma_{\kappa}=0.025$'),
+         ('two-stage EPL_shear kext0.025 lcdm', None, r'\quad EPL+shear, $\sigma_{\kappa}=0.025$, $\Lambda$CDM'),
+         ('two-stage ast0.03', None, r'\quad GW-image astrometry 0.03 arcsec'),
+         ('two-stage ast0.1', None, r'\quad GW-image astrometry 0.1 arcsec'),
+         ('two-stage exact', None, r'\quad exact image-position likelihood'),
+         ('two-stage exact ast0.03', None, r'\quad GW-image astrometry 0.03 arcsec, exact likelihood'),
+         ('two-stage exact ast0.1', None, r'\quad GW-image astrometry 0.1 arcsec, exact likelihood'),
             ('NPE SNR model', None, r'NPE, SNR-model $\mu_B/\mu_A$'),
             ('NPE joint PE', None, r'NPE, joint-PE $\mu_B/\mu_A$')]
+# Bayesian reconstruction against the NPE on the same systems (the comparison of the benchmark paper)
+COMPARISON = [('two-stage', None, 'Bayesian, simulated family'),
+              ('two-stage EPL_shear', None, 'Bayesian, EPL+shear for all'),
+              ('NPE SNR model', None, r'NPE, SNR-model $\mu_B/\mu_A$'),
+              ('NPE joint PE', None, r'NPE, joint-PE $\mu_B/\mu_A$')]
+
+
+def table(acc, rows, with_n=True):
+    """LaTeX table: median relative error (per cent) and coverage per scenario for each analysis."""
     a = acc.set_index(['scenario', 'sky', 'config'])
-    lines = [r'\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}lcccccc@{}}', r'\toprule',
-             r' & \multicolumn{3}{c}{ET} & \multicolumn{3}{c}{O5} \\',
-             r'Analysis & $N$ & err. (\%) & cov. & $N$ & err. (\%) & cov. \\', r'\midrule']
+    k = 3 if with_n else 2
+    head = (r'Analysis & $N$ & err. (\%) & cov. & $N$ & err. (\%) & cov. \\' if with_n
+            else r'Analysis & err. (\%) & cov. & err. (\%) & cov. \\')
+    lines = [r'\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}l' + 'c' * 2 * k + '@{}}', r'\toprule',
+             rf' & \multicolumn{{{k}}}{{c}}{{ET}} & \multicolumn{{{k}}}{{c}}{{O5}} \\', head, r'\midrule']
     for cfg, sky, label in rows:
         cells = []
         for scen in ('ET', 'O5'):
             key = (scen, sky or PRIMARY_SKY[scen], cfg)
             if key in a.index:
                 r = a.loc[key]
-                cells += [f'{int(r.n)}', f'{100 * r.median_rel:.1f}', f'{r.coverage90:.2f}']
+                cells += ([f'{int(r.n)}'] if with_n else []) + [f'{100 * r.median_rel:.1f}', f'{r.coverage90:.2f}']
             else:
-                cells += ['--'] * 3
+                cells += ['--'] * k
         lines.append(label + ' & ' + ' & '.join(cells) + r' \\')
     lines += [r'\bottomrule', r'\end{tabular*}']
     return '\n'.join(lines)
@@ -207,7 +216,8 @@ def main():
     fam.to_csv(a.out_dir / 'gwem_accuracy_family.csv', index=False)
     cmp, j = full_vs_twostage(d)
     cmp.to_csv(a.out_dir / 'gwem_full_vs_twostage.csv', index=False)
-    (a.out_dir / 'table_gwem.tex').write_text(table(acc))
+    (a.out_dir / 'table_gwem.tex').write_text(table(acc, COMPARISON, with_n=False))
+    (a.out_dir / 'table_gwem_tests.tex').write_text(table(acc, TESTS))
     pd.set_option('display.width', 250)
     print(acc.round(3).to_string())
     print(cmp.round(3).to_string())
