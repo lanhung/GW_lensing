@@ -51,3 +51,12 @@ inconsistent four-family selection motivated a new pipeline (`gwlens/`, `analysi
 * conformalized quantile regression with per-family (Mondrian) calibration and neural posterior
   estimation;
 * independent events throughout (no reused source or lens identities).
+
+## 2026-10-27: image labels of one O5 system
+
+The two images of O5 `EPL_shear-7777-0017024` have nearly equal SNRs, and the joint PE and the
+GW+EM input file label them in opposite order (details in `docs/JOINT_PE.md`, reproducibility
+note). All two-stage GW+EM runs of this system were redone with the joint-PE labels, and
+`analysis/gwem_analysis.py` now excludes it from the full-versus-two-stage comparison. Effect on
+the GW+EM table of the magnification paper: O5 only, by 0.02 in coverage and 0.3 points in the
+EPL+shear error.

@@ -119,3 +119,10 @@ first 14 events of the 2026-10-16 batch (listed in `results/pe/events_started_be
 on the analysis server) were run before this fix. Their posteriors are valid, because each run
 generates its data once and analyses it consistently, but their noise realisations cannot be
 regenerated from the seed.
+
+The two images of O5 `EPL_shear-7777-0017024` have nearly equal SNRs (optimal 19.9 and 20.0), and
+a later replay of the catalog swapped which of them is called A. Its joint PE injected A = the
+saddle-point image, whereas the GW+EM input file (`inputs/gwem`) and the full GW+EM runs label the
+minimum as A. Every two-stage run of this system was redone with an input whose `em.gw_a`/`em.gw_b`
+follow the joint-PE labels (same code and commands), and `gwem_analysis.py` excludes it from the
+full-versus-two-stage comparison because the two analyses do not see the same GW data.

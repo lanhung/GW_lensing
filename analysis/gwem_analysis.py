@@ -20,7 +20,9 @@ import pandas as pd
 # Early free-sky ET joint-PE runs whose noise realisation predates the per-event seed, so that their
 # GW data differ from those of the full GW+EM analysis; excluded from the matched comparison.
 UNMATCHED_NOISE = {('ET', 'SIE-7777-0023296'), ('ET', 'EPL_shear-7777-0028423'), ('ET', 'SIS-7777-0007321'),
-                   ('ET', 'SIE-7777-0020513'), ('ET', 'EPL_shear-7777-0005239'), ('ET', 'SIE_shear-7777-0017305')}
+                   ('ET', 'SIE-7777-0020513'), ('ET', 'EPL_shear-7777-0005239'), ('ET', 'SIE_shear-7777-0017305'),
+                   # its two images have nearly equal SNRs and the full analysis injects them with the other labels
+                   ('O5', 'EPL_shear-7777-0017024')}
 FAMILIES = ['SIS', 'SIE', 'SIE_shear', 'EPL_shear']
 # the GW posterior each scenario relies on: the host fixes the sky for ET, whose single-site
 # free-sky posteriors are multimodal; O5 is analysed with a free sky
