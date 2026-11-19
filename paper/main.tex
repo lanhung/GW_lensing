@@ -1,0 +1,45 @@
+\documentclass[fleqn,usenatbib]{mnras}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs,tabularx,array}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+\graphicspath{{figures/}}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcommand{\papertablestyle}{\footnotesize\setlength{\tabcolsep}{4pt}\renewcommand{\arraystretch}{1.1}}
+
+\title[Magnification of lensed gravitational waves]{How well can the magnification of a strongly lensed gravitational wave be measured? A benchmark with GWTC-4.0 populations and O4a noise}
+\author[Zhang et al.]{Fan Zhang,$^{1,2}$ Junxiao Kong,$^{1,3}$ Qikai Zhang,$^{1}$ Qiyuan Yang,$^{4}$ Shaohan Wei,$^{3}$ and Xilong Fan$^{4}$\thanks{E-mail: xilong.fan@whu.edu.cn}\\
+$^{1}$State Key Laboratory of Ocean Sensing and Ocean College, Zhejiang University, Zhoushan 316021, China\\
+$^{2}$Kavli Institute for Astrophysics and Space Research, Massachusetts Institute of Technology, Cambridge, MA 02139, USA\\
+$^{3}$School of Mathematics and Statistics, Lanzhou University, Lanzhou 730000, China\\
+$^{4}$School of Physics and Technology, Wuhan University, Wuhan 430072, China}
+\date{Accepted XXX. Received YYY; in original form ZZZ}
+\pubyear{2026}
+
+\begin{document}
+\label{firstpage}
+\pagerange{\pageref{firstpage}--\pageref{lastpage}}
+\maketitle
+
+\input{sections/abstract}
+\input{sections/intro_methods}
+\input{sections/results}
+\input{sections/pe}
+\input{sections/discussion}
+
+\section*{Acknowledgements}
+This research has made use of data or software obtained from the Gravitational Wave Open Science Center (gwosc.org), a service of the LIGO Scientific Collaboration, the Virgo Collaboration and KAGRA. We used \textsc{bilby}, \textsc{lalsuite}, \textsc{lenstronomy}, \textsc{astropy}, \textsc{scikit-learn}, \textsc{PyTorch} and \textsc{zuko}.
+
+\section*{Data Availability}
+The simulation and analysis code is available at \url{https://github.com/bluejudy151/GW_lensing}. The catalogues can be regenerated with the fixed seeds documented there and are available from the corresponding author on reasonable request. The GW event parameters and O4a strain data are publicly available from GWOSC.
+
+\input{sections/bibliography}
+
+\appendix
+\input{sections/appendix}
+
+\bsp
+\label{lastpage}
+\end{document}

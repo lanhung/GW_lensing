@@ -6,7 +6,13 @@ logs/
 reproduced/
 realdata/o4a_cache/
 realdata/outputs_smoke/
-# Manuscript sources are kept outside the public repository
-paper/
+# Manuscript build products and old drafts
+paper/archive/
+paper/**/*.aux
+paper/**/*.log
+paper/**/*.fls
+paper/**/*.fdb_latexmk
+paper/**/*.out
+paper/**/*.blg
 __pycache__/
 *.pyc

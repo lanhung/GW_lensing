@@ -1,0 +1,52 @@
+\documentclass[aps,prd,twocolumn,superscriptaddress,nofootinbib,floatfix]{revtex4-2}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs,tabularx,array}
+\usepackage{xcolor}
+\usepackage[hidelinks]{hyperref}
+\graphicspath{{figures/}}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcommand{\papertablestyle}{\footnotesize\setlength{\tabcolsep}{4pt}\renewcommand{\arraystretch}{1.1}}
+\newcommand{\degr}{^\circ}
+
+\begin{document}
+
+\title{How well can the magnification of a strongly lensed gravitational wave be measured? A benchmark with GWTC-4.0 populations and O4a noise}
+
+\author{Fan Zhang}
+\affiliation{State Key Laboratory of Ocean Sensing and Ocean College, Zhejiang University, Zhoushan 316021, China}
+\affiliation{Kavli Institute for Astrophysics and Space Research, Massachusetts Institute of Technology, Cambridge, Massachusetts 02139, USA}
+\author{Junxiao Kong}
+\affiliation{State Key Laboratory of Ocean Sensing and Ocean College, Zhejiang University, Zhoushan 316021, China}
+\affiliation{School of Mathematics and Statistics, Lanzhou University, Lanzhou 730000, China}
+\author{Qikai Zhang}
+\affiliation{State Key Laboratory of Ocean Sensing and Ocean College, Zhejiang University, Zhoushan 316021, China}
+\author{Qiyuan Yang}
+\affiliation{School of Physics and Technology, Wuhan University, Wuhan 430072, China}
+\author{Shaohan Wei}
+\affiliation{School of Mathematics and Statistics, Lanzhou University, Lanzhou 730000, China}
+\author{Xilong Fan}
+\email{xilong.fan@whu.edu.cn}
+\affiliation{School of Physics and Technology, Wuhan University, Wuhan 430072, China}
+
+\input{sections/abstract}
+\maketitle
+
+\input{sections/intro_methods}
+\input{sections/results}
+\input{sections/pe}
+\input{sections/discussion}
+
+\begin{acknowledgments}
+This research has made use of data or software obtained from the Gravitational Wave Open Science Center (gwosc.org), a service of the LIGO Scientific Collaboration, the Virgo Collaboration and KAGRA. We used \textsc{bilby}, \textsc{lalsuite}, \textsc{lenstronomy}, \textsc{astropy}, \textsc{scikit-learn}, \textsc{PyTorch} and \textsc{zuko}.
+\end{acknowledgments}
+
+\section*{Data availability}
+The simulation and analysis code is available at \url{https://github.com/lanhung/GW_lensing}; the results in this paper were produced with commit \texttt{b2a2716} of that repository, whose documentation lists the commands, configuration files and software versions. A snapshot of this code, the list of the 120 systems analyzed in Sec.~\ref{sec:pe}, the summaries and posterior samples of every parameter-estimation and GW+EM analysis, and the outputs of the approximation checks are archived at Zenodo, \href{https://doi.org/10.5281/zenodo.23473170}{doi:10.5281/zenodo.23473170}. The catalogs can be regenerated with the fixed seeds documented in the repository. One O5 system whose catalog entry could not be reproduced from the stored inputs is excluded from the GW+EM analyses, as stated in Sec.~\ref{sec:gwem}. The GW event parameters and O4a strain data are publicly available from GWOSC.
+
+\appendix
+\input{sections/appendix}
+
+\input{sections/bibliography}
+
+\end{document}
