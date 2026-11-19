@@ -1,0 +1,8 @@
+{
+ "b2_minus_b3_equals_response_term": true,
+ "true_rho_ratio_identity_max_abs": 1.7763568394002505e-15,
+ "n_pairs": {
+  "ET": 392252,
+  "O5": 8552
+ }
+}

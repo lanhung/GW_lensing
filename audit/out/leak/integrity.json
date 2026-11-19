@@ -1,0 +1,88 @@
+{
+ "scenario": "ET",
+ "n_events": 240000,
+ "n_unique_event_id": 240000,
+ "n_duplicate_feature_rows": 0,
+ "split_sizes": {
+  "train": 144000,
+  "cal": 48000,
+  "test": 48000
+ },
+ "split_disjoint": true,
+ "gate_accepts_declared_sets": {
+  "GW": true,
+  "GW+z": true,
+  "Geometry": true,
+  "Geometry+FU": true,
+  "Geometry+GW(rel)": true,
+  "Full": true,
+  "Geometry+GW(rel)+FU": true,
+  "Geometry+GW(ratio)": true,
+  "Geometry+GW(ratio)+FU": true,
+  "Geometry+GW(ratio+clock)+FU": true,
+  "Geometry+GW(ratio+SNR)+FU": true
+ },
+ "gate_on_truth_columns": {
+  "mu_b": "rejected: Forbidden model inputs: ['mu_b']",
+  "y_true": "rejected: Forbidden model inputs: ['y_true']",
+  "dl_true": "rejected: Forbidden model inputs: ['dl_true']",
+  "z_s_true": "rejected: Forbidden model inputs: ['z_s_true']",
+  "n_images_true": "rejected: Forbidden model inputs: ['n_images_true']",
+  "morse_a": "rejected: Forbidden model inputs: ['morse_a']",
+  "mu": "rejected: Forbidden model inputs: ['mu']",
+  "event_id": "rejected: Forbidden model inputs: ['event_id']",
+  "family": "rejected: Forbidden model inputs: ['family']"
+ },
+ "raw_catalogue_columns": {
+  "true_": [
+   "true_dl",
+   "true_gamma",
+   "true_gamma_ext",
+   "true_m1",
+   "true_m2",
+   "true_n_images",
+   "true_q",
+   "true_sigma_v",
+   "true_theta_e",
+   "true_y",
+   "true_z_l",
+   "true_z_s"
+  ],
+  "obs_": [
+   "obs_pa_light",
+   "obs_q_light",
+   "obs_sigma_v",
+   "obs_z_l",
+   "obs_z_s"
+  ],
+  "ET__": [
+   "ET__geo_n_images",
+   "ET__geo_r_other1",
+   "ET__geo_r_other2",
+   "ET__geo_xa",
+   "ET__geo_xb",
+   "ET__geo_ya",
+   "ET__geo_yb",
+   "ET__img_a",
+   "ET__img_b",
+   "ET__n_detected",
+   "ET__obs_dt_ab",
+   "ET__obs_ln_dapp_a",
+   "ET__obs_ln_dapp_b",
+   "ET__obs_ln_mu_rel",
+   "ET__obs_ln_mu_rel_knownsky",
+   "ET__obs_rho_a",
+   "ET__obs_rho_b",
+   "ET__selected",
+   "ET__true_dt_ab",
+   "ET__true_kappa_a",
+   "ET__true_kappa_b",
+   "ET__true_morse_a",
+   "ET__true_morse_b",
+   "ET__true_mu_a",
+   "ET__true_mu_b",
+   "ET__true_rho_a",
+   "ET__true_rho_b"
+  ]
+ }
+}
