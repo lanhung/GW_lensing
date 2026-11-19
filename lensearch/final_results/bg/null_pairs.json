@@ -1,0 +1,18 @@
+{
+ "images": 80,
+ "unrelated_pairs": 3118,
+ "pass_cuts": 374,
+ "thresholds": {
+  "sel_cat": 7.7716866,
+  "sel_pop": 6.52614999079282,
+  "max_cat": 11.3877735,
+  "max_pop": 9.886180637661235
+ },
+ "selected": 16,
+ "selected_original_twins": 2,
+ "selected_outside_prior": 1,
+ "new_tasks": 16,
+ "images_below_min_maxl": 30,
+ "real_selection_fraction": 0.009660750393170074,
+ "null_selection_fraction": 0.005131494547787043
+}

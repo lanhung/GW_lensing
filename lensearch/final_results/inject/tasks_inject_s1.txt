@@ -1,0 +1,315 @@
+single O4a-EPL_shear-s1-00000A --prior-events O4a-EPL_shear-s1-00000A O4a-EPL_shear-s1-00000B
+single O4a-EPL_shear-s1-00000B --prior-events O4a-EPL_shear-s1-00000A O4a-EPL_shear-s1-00000B
+joint O4a-EPL_shear-s1-00000A O4a-EPL_shear-s1-00000B
+single O4a-EPL_shear-s1-00001A --prior-events O4a-EPL_shear-s1-00001A O4a-EPL_shear-s1-00001B
+single O4a-EPL_shear-s1-00001B --prior-events O4a-EPL_shear-s1-00001A O4a-EPL_shear-s1-00001B
+single O4a-EPL_shear-s1-00002A --prior-events O4a-EPL_shear-s1-00002A O4a-EPL_shear-s1-00002B
+single O4a-EPL_shear-s1-00002B --prior-events O4a-EPL_shear-s1-00002A O4a-EPL_shear-s1-00002B
+single O4a-EPL_shear-s1-00003A --prior-events O4a-EPL_shear-s1-00003A O4a-EPL_shear-s1-00003B
+single O4a-EPL_shear-s1-00003B --prior-events O4a-EPL_shear-s1-00003A O4a-EPL_shear-s1-00003B
+joint O4a-EPL_shear-s1-00003A O4a-EPL_shear-s1-00003B
+single O4a-EPL_shear-s1-00004A --prior-events O4a-EPL_shear-s1-00004A O4a-EPL_shear-s1-00004B
+single O4a-EPL_shear-s1-00004B --prior-events O4a-EPL_shear-s1-00004A O4a-EPL_shear-s1-00004B
+single O4a-EPL_shear-s1-00005A --prior-events O4a-EPL_shear-s1-00005A O4a-EPL_shear-s1-00005B
+single O4a-EPL_shear-s1-00005B --prior-events O4a-EPL_shear-s1-00005A O4a-EPL_shear-s1-00005B
+single O4a-EPL_shear-s1-00007A --prior-events O4a-EPL_shear-s1-00007A O4a-EPL_shear-s1-00007B
+single O4a-EPL_shear-s1-00007B --prior-events O4a-EPL_shear-s1-00007A O4a-EPL_shear-s1-00007B
+joint O4a-EPL_shear-s1-00007A O4a-EPL_shear-s1-00007B
+single O4a-EPL_shear-s1-00009A --prior-events O4a-EPL_shear-s1-00009A O4a-EPL_shear-s1-00009B
+single O4a-EPL_shear-s1-00009B --prior-events O4a-EPL_shear-s1-00009A O4a-EPL_shear-s1-00009B
+single O4a-EPL_shear-s1-00010A --prior-events O4a-EPL_shear-s1-00010A O4a-EPL_shear-s1-00010B
+single O4a-EPL_shear-s1-00010B --prior-events O4a-EPL_shear-s1-00010A O4a-EPL_shear-s1-00010B
+single O4a-EPL_shear-s1-00011A --prior-events O4a-EPL_shear-s1-00011A O4a-EPL_shear-s1-00011B
+single O4a-EPL_shear-s1-00011B --prior-events O4a-EPL_shear-s1-00011A O4a-EPL_shear-s1-00011B
+joint O4a-EPL_shear-s1-00011A O4a-EPL_shear-s1-00011B
+single O4a-EPL_shear-s1-00012A --prior-events O4a-EPL_shear-s1-00012A O4a-EPL_shear-s1-00012B
+single O4a-EPL_shear-s1-00012B --prior-events O4a-EPL_shear-s1-00012A O4a-EPL_shear-s1-00012B
+single O4a-EPL_shear-s1-00013A --prior-events O4a-EPL_shear-s1-00013A O4a-EPL_shear-s1-00013B
+single O4a-EPL_shear-s1-00013B --prior-events O4a-EPL_shear-s1-00013A O4a-EPL_shear-s1-00013B
+single O4a-EPL_shear-s1-00014A --prior-events O4a-EPL_shear-s1-00014A O4a-EPL_shear-s1-00014B
+single O4a-EPL_shear-s1-00014B --prior-events O4a-EPL_shear-s1-00014A O4a-EPL_shear-s1-00014B
+joint O4a-EPL_shear-s1-00014A O4a-EPL_shear-s1-00014B
+single O4a-EPL_shear-s1-00015A --prior-events O4a-EPL_shear-s1-00015A O4a-EPL_shear-s1-00015B
+single O4a-EPL_shear-s1-00015B --prior-events O4a-EPL_shear-s1-00015A O4a-EPL_shear-s1-00015B
+single O4a-EPL_shear-s1-00016A --prior-events O4a-EPL_shear-s1-00016A O4a-EPL_shear-s1-00016B
+single O4a-EPL_shear-s1-00016B --prior-events O4a-EPL_shear-s1-00016A O4a-EPL_shear-s1-00016B
+single O4a-EPL_shear-s1-00017A --prior-events O4a-EPL_shear-s1-00017A O4a-EPL_shear-s1-00017B
+single O4a-EPL_shear-s1-00017B --prior-events O4a-EPL_shear-s1-00017A O4a-EPL_shear-s1-00017B
+joint O4a-EPL_shear-s1-00017A O4a-EPL_shear-s1-00017B
+single O4a-EPL_shear-s1-00018A --prior-events O4a-EPL_shear-s1-00018A O4a-EPL_shear-s1-00018B
+single O4a-EPL_shear-s1-00018B --prior-events O4a-EPL_shear-s1-00018A O4a-EPL_shear-s1-00018B
+single O4a-EPL_shear-s1-00019A --prior-events O4a-EPL_shear-s1-00019A O4a-EPL_shear-s1-00019B
+single O4a-EPL_shear-s1-00019B --prior-events O4a-EPL_shear-s1-00019A O4a-EPL_shear-s1-00019B
+single O4a-EPL_shear-s1-00020A --prior-events O4a-EPL_shear-s1-00020A O4a-EPL_shear-s1-00020B
+single O4a-EPL_shear-s1-00020B --prior-events O4a-EPL_shear-s1-00020A O4a-EPL_shear-s1-00020B
+joint O4a-EPL_shear-s1-00020A O4a-EPL_shear-s1-00020B
+single O4a-EPL_shear-s1-00021A --prior-events O4a-EPL_shear-s1-00021A O4a-EPL_shear-s1-00021B
+single O4a-EPL_shear-s1-00021B --prior-events O4a-EPL_shear-s1-00021A O4a-EPL_shear-s1-00021B
+single O4a-EPL_shear-s1-00022A --prior-events O4a-EPL_shear-s1-00022A O4a-EPL_shear-s1-00022B
+single O4a-EPL_shear-s1-00022B --prior-events O4a-EPL_shear-s1-00022A O4a-EPL_shear-s1-00022B
+single O4a-EPL_shear-s1-00024A --prior-events O4a-EPL_shear-s1-00024A O4a-EPL_shear-s1-00024B
+single O4a-EPL_shear-s1-00024B --prior-events O4a-EPL_shear-s1-00024A O4a-EPL_shear-s1-00024B
+joint O4a-EPL_shear-s1-00024A O4a-EPL_shear-s1-00024B
+single O4a-EPL_shear-s1-00025A --prior-events O4a-EPL_shear-s1-00025A O4a-EPL_shear-s1-00025B
+single O4a-EPL_shear-s1-00025B --prior-events O4a-EPL_shear-s1-00025A O4a-EPL_shear-s1-00025B
+single O4a-EPL_shear-s1-00026A --prior-events O4a-EPL_shear-s1-00026A O4a-EPL_shear-s1-00026B
+single O4a-EPL_shear-s1-00026B --prior-events O4a-EPL_shear-s1-00026A O4a-EPL_shear-s1-00026B
+single O4a-EPL_shear-s1-00027A --prior-events O4a-EPL_shear-s1-00027A O4a-EPL_shear-s1-00027B
+single O4a-EPL_shear-s1-00027B --prior-events O4a-EPL_shear-s1-00027A O4a-EPL_shear-s1-00027B
+joint O4a-EPL_shear-s1-00027A O4a-EPL_shear-s1-00027B
+single O4a-EPL_shear-s1-00028A --prior-events O4a-EPL_shear-s1-00028A O4a-EPL_shear-s1-00028B
+single O4a-EPL_shear-s1-00028B --prior-events O4a-EPL_shear-s1-00028A O4a-EPL_shear-s1-00028B
+single O4a-EPL_shear-s1-00029A --prior-events O4a-EPL_shear-s1-00029A O4a-EPL_shear-s1-00029B
+single O4a-EPL_shear-s1-00029B --prior-events O4a-EPL_shear-s1-00029A O4a-EPL_shear-s1-00029B
+single O4a-EPL_shear-s1-00030A --prior-events O4a-EPL_shear-s1-00030A O4a-EPL_shear-s1-00030B
+single O4a-EPL_shear-s1-00030B --prior-events O4a-EPL_shear-s1-00030A O4a-EPL_shear-s1-00030B
+joint O4a-EPL_shear-s1-00030A O4a-EPL_shear-s1-00030B
+single O4a-EPL_shear-s1-00031A --prior-events O4a-EPL_shear-s1-00031A O4a-EPL_shear-s1-00031B
+single O4a-EPL_shear-s1-00031B --prior-events O4a-EPL_shear-s1-00031A O4a-EPL_shear-s1-00031B
+single O4a-EPL_shear-s1-00032A --prior-events O4a-EPL_shear-s1-00032A O4a-EPL_shear-s1-00032B
+single O4a-EPL_shear-s1-00032B --prior-events O4a-EPL_shear-s1-00032A O4a-EPL_shear-s1-00032B
+single O4a-EPL_shear-s1-00033A --prior-events O4a-EPL_shear-s1-00033A O4a-EPL_shear-s1-00033B
+single O4a-EPL_shear-s1-00033B --prior-events O4a-EPL_shear-s1-00033A O4a-EPL_shear-s1-00033B
+joint O4a-EPL_shear-s1-00033A O4a-EPL_shear-s1-00033B
+single O4a-EPL_shear-s1-00034A --prior-events O4a-EPL_shear-s1-00034A O4a-EPL_shear-s1-00034B
+single O4a-EPL_shear-s1-00034B --prior-events O4a-EPL_shear-s1-00034A O4a-EPL_shear-s1-00034B
+single O4a-EPL_shear-s1-00035A --prior-events O4a-EPL_shear-s1-00035A O4a-EPL_shear-s1-00035B
+single O4a-EPL_shear-s1-00035B --prior-events O4a-EPL_shear-s1-00035A O4a-EPL_shear-s1-00035B
+single O4a-EPL_shear-s1-00036A --prior-events O4a-EPL_shear-s1-00036A O4a-EPL_shear-s1-00036B
+single O4a-EPL_shear-s1-00036B --prior-events O4a-EPL_shear-s1-00036A O4a-EPL_shear-s1-00036B
+joint O4a-EPL_shear-s1-00036A O4a-EPL_shear-s1-00036B
+single O4a-EPL_shear-s1-00038A --prior-events O4a-EPL_shear-s1-00038A O4a-EPL_shear-s1-00038B
+single O4a-EPL_shear-s1-00038B --prior-events O4a-EPL_shear-s1-00038A O4a-EPL_shear-s1-00038B
+single O4a-EPL_shear-s1-00039A --prior-events O4a-EPL_shear-s1-00039A O4a-EPL_shear-s1-00039B
+single O4a-EPL_shear-s1-00039B --prior-events O4a-EPL_shear-s1-00039A O4a-EPL_shear-s1-00039B
+single O4a-EPL_shear-s1-00040A --prior-events O4a-EPL_shear-s1-00040A O4a-EPL_shear-s1-00040B
+single O4a-EPL_shear-s1-00040B --prior-events O4a-EPL_shear-s1-00040A O4a-EPL_shear-s1-00040B
+joint O4a-EPL_shear-s1-00040A O4a-EPL_shear-s1-00040B
+single O4a-EPL_shear-s1-00041A --prior-events O4a-EPL_shear-s1-00041A O4a-EPL_shear-s1-00041B
+single O4a-EPL_shear-s1-00041B --prior-events O4a-EPL_shear-s1-00041A O4a-EPL_shear-s1-00041B
+single O4a-EPL_shear-s1-00042A --prior-events O4a-EPL_shear-s1-00042A O4a-EPL_shear-s1-00042B
+single O4a-EPL_shear-s1-00042B --prior-events O4a-EPL_shear-s1-00042A O4a-EPL_shear-s1-00042B
+single O4a-EPL_shear-s1-00043A --prior-events O4a-EPL_shear-s1-00043A O4a-EPL_shear-s1-00043B
+single O4a-EPL_shear-s1-00043B --prior-events O4a-EPL_shear-s1-00043A O4a-EPL_shear-s1-00043B
+joint O4a-EPL_shear-s1-00043A O4a-EPL_shear-s1-00043B
+single O4a-EPL_shear-s1-00044A --prior-events O4a-EPL_shear-s1-00044A O4a-EPL_shear-s1-00044B
+single O4a-EPL_shear-s1-00044B --prior-events O4a-EPL_shear-s1-00044A O4a-EPL_shear-s1-00044B
+single O4a-EPL_shear-s1-00045A --prior-events O4a-EPL_shear-s1-00045A O4a-EPL_shear-s1-00045B
+single O4a-EPL_shear-s1-00045B --prior-events O4a-EPL_shear-s1-00045A O4a-EPL_shear-s1-00045B
+single O4a-EPL_shear-s1-00046A --prior-events O4a-EPL_shear-s1-00046A O4a-EPL_shear-s1-00046B
+single O4a-EPL_shear-s1-00046B --prior-events O4a-EPL_shear-s1-00046A O4a-EPL_shear-s1-00046B
+joint O4a-EPL_shear-s1-00046A O4a-EPL_shear-s1-00046B
+single O4a-EPL_shear-s1-00047A --prior-events O4a-EPL_shear-s1-00047A O4a-EPL_shear-s1-00047B
+single O4a-EPL_shear-s1-00047B --prior-events O4a-EPL_shear-s1-00047A O4a-EPL_shear-s1-00047B
+single O4a-EPL_shear-s1-00048A --prior-events O4a-EPL_shear-s1-00048A O4a-EPL_shear-s1-00048B
+single O4a-EPL_shear-s1-00048B --prior-events O4a-EPL_shear-s1-00048A O4a-EPL_shear-s1-00048B
+single O4a-EPL_shear-s1-00049A --prior-events O4a-EPL_shear-s1-00049A O4a-EPL_shear-s1-00049B
+single O4a-EPL_shear-s1-00049B --prior-events O4a-EPL_shear-s1-00049A O4a-EPL_shear-s1-00049B
+joint O4a-EPL_shear-s1-00049A O4a-EPL_shear-s1-00049B
+single O4a-EPL_shear-s1-00050A --prior-events O4a-EPL_shear-s1-00050A O4a-EPL_shear-s1-00050B
+single O4a-EPL_shear-s1-00050B --prior-events O4a-EPL_shear-s1-00050A O4a-EPL_shear-s1-00050B
+single O4a-EPL_shear-s1-00051A --prior-events O4a-EPL_shear-s1-00051A O4a-EPL_shear-s1-00051B
+single O4a-EPL_shear-s1-00051B --prior-events O4a-EPL_shear-s1-00051A O4a-EPL_shear-s1-00051B
+single O4a-EPL_shear-s1-00052A --prior-events O4a-EPL_shear-s1-00052A O4a-EPL_shear-s1-00052B
+single O4a-EPL_shear-s1-00052B --prior-events O4a-EPL_shear-s1-00052A O4a-EPL_shear-s1-00052B
+joint O4a-EPL_shear-s1-00052A O4a-EPL_shear-s1-00052B
+single O4a-EPL_shear-s1-00053A --prior-events O4a-EPL_shear-s1-00053A O4a-EPL_shear-s1-00053B
+single O4a-EPL_shear-s1-00053B --prior-events O4a-EPL_shear-s1-00053A O4a-EPL_shear-s1-00053B
+single O4a-EPL_shear-s1-00054A --prior-events O4a-EPL_shear-s1-00054A O4a-EPL_shear-s1-00054B
+single O4a-EPL_shear-s1-00054B --prior-events O4a-EPL_shear-s1-00054A O4a-EPL_shear-s1-00054B
+single O4a-EPL_shear-s1-00055A --prior-events O4a-EPL_shear-s1-00055A O4a-EPL_shear-s1-00055B
+single O4a-EPL_shear-s1-00055B --prior-events O4a-EPL_shear-s1-00055A O4a-EPL_shear-s1-00055B
+joint O4a-EPL_shear-s1-00055A O4a-EPL_shear-s1-00055B
+single O4a-EPL_shear-s1-00058A --prior-events O4a-EPL_shear-s1-00058A O4a-EPL_shear-s1-00058B
+single O4a-EPL_shear-s1-00058B --prior-events O4a-EPL_shear-s1-00058A O4a-EPL_shear-s1-00058B
+single O4a-EPL_shear-s1-00059A --prior-events O4a-EPL_shear-s1-00059A O4a-EPL_shear-s1-00059B
+single O4a-EPL_shear-s1-00059B --prior-events O4a-EPL_shear-s1-00059A O4a-EPL_shear-s1-00059B
+single O4a-EPL_shear-s1-00060A --prior-events O4a-EPL_shear-s1-00060A O4a-EPL_shear-s1-00060B
+single O4a-EPL_shear-s1-00060B --prior-events O4a-EPL_shear-s1-00060A O4a-EPL_shear-s1-00060B
+joint O4a-EPL_shear-s1-00060A O4a-EPL_shear-s1-00060B
+single O4a-EPL_shear-s1-00062A --prior-events O4a-EPL_shear-s1-00062A O4a-EPL_shear-s1-00062B
+single O4a-EPL_shear-s1-00062B --prior-events O4a-EPL_shear-s1-00062A O4a-EPL_shear-s1-00062B
+single O4a-EPL_shear-s1-00064A --prior-events O4a-EPL_shear-s1-00064A O4a-EPL_shear-s1-00064B
+single O4a-EPL_shear-s1-00064B --prior-events O4a-EPL_shear-s1-00064A O4a-EPL_shear-s1-00064B
+single O4a-EPL_shear-s1-00065A --prior-events O4a-EPL_shear-s1-00065A O4a-EPL_shear-s1-00065B
+single O4a-EPL_shear-s1-00065B --prior-events O4a-EPL_shear-s1-00065A O4a-EPL_shear-s1-00065B
+joint O4a-EPL_shear-s1-00065A O4a-EPL_shear-s1-00065B
+single O4a-EPL_shear-s1-00066A --prior-events O4a-EPL_shear-s1-00066A O4a-EPL_shear-s1-00066B
+single O4a-EPL_shear-s1-00066B --prior-events O4a-EPL_shear-s1-00066A O4a-EPL_shear-s1-00066B
+single O4a-EPL_shear-s1-00068A --prior-events O4a-EPL_shear-s1-00068A O4a-EPL_shear-s1-00068B
+single O4a-EPL_shear-s1-00068B --prior-events O4a-EPL_shear-s1-00068A O4a-EPL_shear-s1-00068B
+single O4a-EPL_shear-s1-00069A --prior-events O4a-EPL_shear-s1-00069A O4a-EPL_shear-s1-00069B
+single O4a-EPL_shear-s1-00069B --prior-events O4a-EPL_shear-s1-00069A O4a-EPL_shear-s1-00069B
+joint O4a-EPL_shear-s1-00069A O4a-EPL_shear-s1-00069B
+single O4a-EPL_shear-s1-00071A --prior-events O4a-EPL_shear-s1-00071A O4a-EPL_shear-s1-00071B
+single O4a-EPL_shear-s1-00071B --prior-events O4a-EPL_shear-s1-00071A O4a-EPL_shear-s1-00071B
+single O4a-EPL_shear-s1-00072A --prior-events O4a-EPL_shear-s1-00072A O4a-EPL_shear-s1-00072B
+single O4a-EPL_shear-s1-00072B --prior-events O4a-EPL_shear-s1-00072A O4a-EPL_shear-s1-00072B
+single O4a-EPL_shear-s1-00073A --prior-events O4a-EPL_shear-s1-00073A O4a-EPL_shear-s1-00073B
+single O4a-EPL_shear-s1-00073B --prior-events O4a-EPL_shear-s1-00073A O4a-EPL_shear-s1-00073B
+joint O4a-EPL_shear-s1-00073A O4a-EPL_shear-s1-00073B
+single O4b-EPL_shear-s1-00000A --prior-events O4b-EPL_shear-s1-00000A O4b-EPL_shear-s1-00000B
+single O4b-EPL_shear-s1-00000B --prior-events O4b-EPL_shear-s1-00000A O4b-EPL_shear-s1-00000B
+single O4b-EPL_shear-s1-00001A --prior-events O4b-EPL_shear-s1-00001A O4b-EPL_shear-s1-00001B
+single O4b-EPL_shear-s1-00001B --prior-events O4b-EPL_shear-s1-00001A O4b-EPL_shear-s1-00001B
+single O4b-EPL_shear-s1-00002A --prior-events O4b-EPL_shear-s1-00002A O4b-EPL_shear-s1-00002B
+single O4b-EPL_shear-s1-00002B --prior-events O4b-EPL_shear-s1-00002A O4b-EPL_shear-s1-00002B
+joint O4b-EPL_shear-s1-00002A O4b-EPL_shear-s1-00002B
+single O4b-EPL_shear-s1-00003A --prior-events O4b-EPL_shear-s1-00003A O4b-EPL_shear-s1-00003B
+single O4b-EPL_shear-s1-00003B --prior-events O4b-EPL_shear-s1-00003A O4b-EPL_shear-s1-00003B
+single O4b-EPL_shear-s1-00005A --prior-events O4b-EPL_shear-s1-00005A O4b-EPL_shear-s1-00005B
+single O4b-EPL_shear-s1-00005B --prior-events O4b-EPL_shear-s1-00005A O4b-EPL_shear-s1-00005B
+single O4b-EPL_shear-s1-00006A --prior-events O4b-EPL_shear-s1-00006A O4b-EPL_shear-s1-00006B
+single O4b-EPL_shear-s1-00006B --prior-events O4b-EPL_shear-s1-00006A O4b-EPL_shear-s1-00006B
+joint O4b-EPL_shear-s1-00006A O4b-EPL_shear-s1-00006B
+single O4b-EPL_shear-s1-00007A --prior-events O4b-EPL_shear-s1-00007A O4b-EPL_shear-s1-00007B
+single O4b-EPL_shear-s1-00007B --prior-events O4b-EPL_shear-s1-00007A O4b-EPL_shear-s1-00007B
+single O4b-EPL_shear-s1-00008A --prior-events O4b-EPL_shear-s1-00008A O4b-EPL_shear-s1-00008B
+single O4b-EPL_shear-s1-00008B --prior-events O4b-EPL_shear-s1-00008A O4b-EPL_shear-s1-00008B
+single O4b-EPL_shear-s1-00009A --prior-events O4b-EPL_shear-s1-00009A O4b-EPL_shear-s1-00009B
+single O4b-EPL_shear-s1-00009B --prior-events O4b-EPL_shear-s1-00009A O4b-EPL_shear-s1-00009B
+joint O4b-EPL_shear-s1-00009A O4b-EPL_shear-s1-00009B
+single O4b-EPL_shear-s1-00011A --prior-events O4b-EPL_shear-s1-00011A O4b-EPL_shear-s1-00011B
+single O4b-EPL_shear-s1-00011B --prior-events O4b-EPL_shear-s1-00011A O4b-EPL_shear-s1-00011B
+single O4b-EPL_shear-s1-00012A --prior-events O4b-EPL_shear-s1-00012A O4b-EPL_shear-s1-00012B
+single O4b-EPL_shear-s1-00012B --prior-events O4b-EPL_shear-s1-00012A O4b-EPL_shear-s1-00012B
+single O4b-EPL_shear-s1-00013A --prior-events O4b-EPL_shear-s1-00013A O4b-EPL_shear-s1-00013B
+single O4b-EPL_shear-s1-00013B --prior-events O4b-EPL_shear-s1-00013A O4b-EPL_shear-s1-00013B
+joint O4b-EPL_shear-s1-00013A O4b-EPL_shear-s1-00013B
+single O4b-EPL_shear-s1-00014A --prior-events O4b-EPL_shear-s1-00014A O4b-EPL_shear-s1-00014B
+single O4b-EPL_shear-s1-00014B --prior-events O4b-EPL_shear-s1-00014A O4b-EPL_shear-s1-00014B
+single O4b-EPL_shear-s1-00015A --prior-events O4b-EPL_shear-s1-00015A O4b-EPL_shear-s1-00015B
+single O4b-EPL_shear-s1-00015B --prior-events O4b-EPL_shear-s1-00015A O4b-EPL_shear-s1-00015B
+single O4b-EPL_shear-s1-00016A --prior-events O4b-EPL_shear-s1-00016A O4b-EPL_shear-s1-00016B
+single O4b-EPL_shear-s1-00016B --prior-events O4b-EPL_shear-s1-00016A O4b-EPL_shear-s1-00016B
+joint O4b-EPL_shear-s1-00016A O4b-EPL_shear-s1-00016B
+single O4b-EPL_shear-s1-00017A --prior-events O4b-EPL_shear-s1-00017A O4b-EPL_shear-s1-00017B
+single O4b-EPL_shear-s1-00017B --prior-events O4b-EPL_shear-s1-00017A O4b-EPL_shear-s1-00017B
+single O4b-EPL_shear-s1-00018A --prior-events O4b-EPL_shear-s1-00018A O4b-EPL_shear-s1-00018B
+single O4b-EPL_shear-s1-00018B --prior-events O4b-EPL_shear-s1-00018A O4b-EPL_shear-s1-00018B
+single O4b-EPL_shear-s1-00019A --prior-events O4b-EPL_shear-s1-00019A O4b-EPL_shear-s1-00019B
+single O4b-EPL_shear-s1-00019B --prior-events O4b-EPL_shear-s1-00019A O4b-EPL_shear-s1-00019B
+joint O4b-EPL_shear-s1-00019A O4b-EPL_shear-s1-00019B
+single O4b-EPL_shear-s1-00020A --prior-events O4b-EPL_shear-s1-00020A O4b-EPL_shear-s1-00020B
+single O4b-EPL_shear-s1-00020B --prior-events O4b-EPL_shear-s1-00020A O4b-EPL_shear-s1-00020B
+single O4b-EPL_shear-s1-00021A --prior-events O4b-EPL_shear-s1-00021A O4b-EPL_shear-s1-00021B
+single O4b-EPL_shear-s1-00021B --prior-events O4b-EPL_shear-s1-00021A O4b-EPL_shear-s1-00021B
+single O4b-EPL_shear-s1-00022A --prior-events O4b-EPL_shear-s1-00022A O4b-EPL_shear-s1-00022B
+single O4b-EPL_shear-s1-00022B --prior-events O4b-EPL_shear-s1-00022A O4b-EPL_shear-s1-00022B
+joint O4b-EPL_shear-s1-00022A O4b-EPL_shear-s1-00022B
+single O4b-EPL_shear-s1-00023A --prior-events O4b-EPL_shear-s1-00023A O4b-EPL_shear-s1-00023B
+single O4b-EPL_shear-s1-00023B --prior-events O4b-EPL_shear-s1-00023A O4b-EPL_shear-s1-00023B
+single O4b-EPL_shear-s1-00024A --prior-events O4b-EPL_shear-s1-00024A O4b-EPL_shear-s1-00024B
+single O4b-EPL_shear-s1-00024B --prior-events O4b-EPL_shear-s1-00024A O4b-EPL_shear-s1-00024B
+single O4b-EPL_shear-s1-00025A --prior-events O4b-EPL_shear-s1-00025A O4b-EPL_shear-s1-00025B
+single O4b-EPL_shear-s1-00025B --prior-events O4b-EPL_shear-s1-00025A O4b-EPL_shear-s1-00025B
+joint O4b-EPL_shear-s1-00025A O4b-EPL_shear-s1-00025B
+single O4b-EPL_shear-s1-00026A --prior-events O4b-EPL_shear-s1-00026A O4b-EPL_shear-s1-00026B
+single O4b-EPL_shear-s1-00026B --prior-events O4b-EPL_shear-s1-00026A O4b-EPL_shear-s1-00026B
+single O4b-EPL_shear-s1-00027A --prior-events O4b-EPL_shear-s1-00027A O4b-EPL_shear-s1-00027B
+single O4b-EPL_shear-s1-00027B --prior-events O4b-EPL_shear-s1-00027A O4b-EPL_shear-s1-00027B
+single O4b-EPL_shear-s1-00028A --prior-events O4b-EPL_shear-s1-00028A O4b-EPL_shear-s1-00028B
+single O4b-EPL_shear-s1-00028B --prior-events O4b-EPL_shear-s1-00028A O4b-EPL_shear-s1-00028B
+joint O4b-EPL_shear-s1-00028A O4b-EPL_shear-s1-00028B
+single O4b-EPL_shear-s1-00029A --prior-events O4b-EPL_shear-s1-00029A O4b-EPL_shear-s1-00029B
+single O4b-EPL_shear-s1-00029B --prior-events O4b-EPL_shear-s1-00029A O4b-EPL_shear-s1-00029B
+single O4b-EPL_shear-s1-00030A --prior-events O4b-EPL_shear-s1-00030A O4b-EPL_shear-s1-00030B
+single O4b-EPL_shear-s1-00030B --prior-events O4b-EPL_shear-s1-00030A O4b-EPL_shear-s1-00030B
+single O4b-EPL_shear-s1-00031A --prior-events O4b-EPL_shear-s1-00031A O4b-EPL_shear-s1-00031B
+single O4b-EPL_shear-s1-00031B --prior-events O4b-EPL_shear-s1-00031A O4b-EPL_shear-s1-00031B
+joint O4b-EPL_shear-s1-00031A O4b-EPL_shear-s1-00031B
+single O4b-EPL_shear-s1-00032A --prior-events O4b-EPL_shear-s1-00032A O4b-EPL_shear-s1-00032B
+single O4b-EPL_shear-s1-00032B --prior-events O4b-EPL_shear-s1-00032A O4b-EPL_shear-s1-00032B
+single O4b-EPL_shear-s1-00033A --prior-events O4b-EPL_shear-s1-00033A O4b-EPL_shear-s1-00033B
+single O4b-EPL_shear-s1-00033B --prior-events O4b-EPL_shear-s1-00033A O4b-EPL_shear-s1-00033B
+single O4b-EPL_shear-s1-00034A --prior-events O4b-EPL_shear-s1-00034A O4b-EPL_shear-s1-00034B
+single O4b-EPL_shear-s1-00034B --prior-events O4b-EPL_shear-s1-00034A O4b-EPL_shear-s1-00034B
+joint O4b-EPL_shear-s1-00034A O4b-EPL_shear-s1-00034B
+single O4b-EPL_shear-s1-00035A --prior-events O4b-EPL_shear-s1-00035A O4b-EPL_shear-s1-00035B
+single O4b-EPL_shear-s1-00035B --prior-events O4b-EPL_shear-s1-00035A O4b-EPL_shear-s1-00035B
+single O4b-EPL_shear-s1-00036A --prior-events O4b-EPL_shear-s1-00036A O4b-EPL_shear-s1-00036B
+single O4b-EPL_shear-s1-00036B --prior-events O4b-EPL_shear-s1-00036A O4b-EPL_shear-s1-00036B
+single O4b-EPL_shear-s1-00037A --prior-events O4b-EPL_shear-s1-00037A O4b-EPL_shear-s1-00037B
+single O4b-EPL_shear-s1-00037B --prior-events O4b-EPL_shear-s1-00037A O4b-EPL_shear-s1-00037B
+joint O4b-EPL_shear-s1-00037A O4b-EPL_shear-s1-00037B
+single O4b-EPL_shear-s1-00038A --prior-events O4b-EPL_shear-s1-00038A O4b-EPL_shear-s1-00038B
+single O4b-EPL_shear-s1-00038B --prior-events O4b-EPL_shear-s1-00038A O4b-EPL_shear-s1-00038B
+single O4b-EPL_shear-s1-00039A --prior-events O4b-EPL_shear-s1-00039A O4b-EPL_shear-s1-00039B
+single O4b-EPL_shear-s1-00039B --prior-events O4b-EPL_shear-s1-00039A O4b-EPL_shear-s1-00039B
+single O4b-EPL_shear-s1-00040A --prior-events O4b-EPL_shear-s1-00040A O4b-EPL_shear-s1-00040B
+single O4b-EPL_shear-s1-00040B --prior-events O4b-EPL_shear-s1-00040A O4b-EPL_shear-s1-00040B
+joint O4b-EPL_shear-s1-00040A O4b-EPL_shear-s1-00040B
+single O4b-EPL_shear-s1-00041A --prior-events O4b-EPL_shear-s1-00041A O4b-EPL_shear-s1-00041B
+single O4b-EPL_shear-s1-00041B --prior-events O4b-EPL_shear-s1-00041A O4b-EPL_shear-s1-00041B
+single O4b-EPL_shear-s1-00042A --prior-events O4b-EPL_shear-s1-00042A O4b-EPL_shear-s1-00042B
+single O4b-EPL_shear-s1-00042B --prior-events O4b-EPL_shear-s1-00042A O4b-EPL_shear-s1-00042B
+single O4b-EPL_shear-s1-00043A --prior-events O4b-EPL_shear-s1-00043A O4b-EPL_shear-s1-00043B
+single O4b-EPL_shear-s1-00043B --prior-events O4b-EPL_shear-s1-00043A O4b-EPL_shear-s1-00043B
+joint O4b-EPL_shear-s1-00043A O4b-EPL_shear-s1-00043B
+single O4b-EPL_shear-s1-00044A --prior-events O4b-EPL_shear-s1-00044A O4b-EPL_shear-s1-00044B
+single O4b-EPL_shear-s1-00044B --prior-events O4b-EPL_shear-s1-00044A O4b-EPL_shear-s1-00044B
+single O4b-EPL_shear-s1-00045A --prior-events O4b-EPL_shear-s1-00045A O4b-EPL_shear-s1-00045B
+single O4b-EPL_shear-s1-00045B --prior-events O4b-EPL_shear-s1-00045A O4b-EPL_shear-s1-00045B
+single O4b-EPL_shear-s1-00046A --prior-events O4b-EPL_shear-s1-00046A O4b-EPL_shear-s1-00046B
+single O4b-EPL_shear-s1-00046B --prior-events O4b-EPL_shear-s1-00046A O4b-EPL_shear-s1-00046B
+joint O4b-EPL_shear-s1-00046A O4b-EPL_shear-s1-00046B
+single O4b-EPL_shear-s1-00047A --prior-events O4b-EPL_shear-s1-00047A O4b-EPL_shear-s1-00047B
+single O4b-EPL_shear-s1-00047B --prior-events O4b-EPL_shear-s1-00047A O4b-EPL_shear-s1-00047B
+single O4b-EPL_shear-s1-00048A --prior-events O4b-EPL_shear-s1-00048A O4b-EPL_shear-s1-00048B
+single O4b-EPL_shear-s1-00048B --prior-events O4b-EPL_shear-s1-00048A O4b-EPL_shear-s1-00048B
+single O4b-EPL_shear-s1-00049A --prior-events O4b-EPL_shear-s1-00049A O4b-EPL_shear-s1-00049B
+single O4b-EPL_shear-s1-00049B --prior-events O4b-EPL_shear-s1-00049A O4b-EPL_shear-s1-00049B
+joint O4b-EPL_shear-s1-00049A O4b-EPL_shear-s1-00049B
+single O4b-EPL_shear-s1-00050A --prior-events O4b-EPL_shear-s1-00050A O4b-EPL_shear-s1-00050B
+single O4b-EPL_shear-s1-00050B --prior-events O4b-EPL_shear-s1-00050A O4b-EPL_shear-s1-00050B
+single O4b-EPL_shear-s1-00051A --prior-events O4b-EPL_shear-s1-00051A O4b-EPL_shear-s1-00051B
+single O4b-EPL_shear-s1-00051B --prior-events O4b-EPL_shear-s1-00051A O4b-EPL_shear-s1-00051B
+single O4b-EPL_shear-s1-00052A --prior-events O4b-EPL_shear-s1-00052A O4b-EPL_shear-s1-00052B
+single O4b-EPL_shear-s1-00052B --prior-events O4b-EPL_shear-s1-00052A O4b-EPL_shear-s1-00052B
+joint O4b-EPL_shear-s1-00052A O4b-EPL_shear-s1-00052B
+single O4b-EPL_shear-s1-00054A --prior-events O4b-EPL_shear-s1-00054A O4b-EPL_shear-s1-00054B
+single O4b-EPL_shear-s1-00054B --prior-events O4b-EPL_shear-s1-00054A O4b-EPL_shear-s1-00054B
+single O4b-EPL_shear-s1-00055A --prior-events O4b-EPL_shear-s1-00055A O4b-EPL_shear-s1-00055B
+single O4b-EPL_shear-s1-00055B --prior-events O4b-EPL_shear-s1-00055A O4b-EPL_shear-s1-00055B
+single O4b-EPL_shear-s1-00056A --prior-events O4b-EPL_shear-s1-00056A O4b-EPL_shear-s1-00056B
+single O4b-EPL_shear-s1-00056B --prior-events O4b-EPL_shear-s1-00056A O4b-EPL_shear-s1-00056B
+joint O4b-EPL_shear-s1-00056A O4b-EPL_shear-s1-00056B
+single O4b-EPL_shear-s1-00057A --prior-events O4b-EPL_shear-s1-00057A O4b-EPL_shear-s1-00057B
+single O4b-EPL_shear-s1-00057B --prior-events O4b-EPL_shear-s1-00057A O4b-EPL_shear-s1-00057B
+single O4b-EPL_shear-s1-00059A --prior-events O4b-EPL_shear-s1-00059A O4b-EPL_shear-s1-00059B
+single O4b-EPL_shear-s1-00059B --prior-events O4b-EPL_shear-s1-00059A O4b-EPL_shear-s1-00059B
+single O4b-EPL_shear-s1-00060A --prior-events O4b-EPL_shear-s1-00060A O4b-EPL_shear-s1-00060B
+single O4b-EPL_shear-s1-00060B --prior-events O4b-EPL_shear-s1-00060A O4b-EPL_shear-s1-00060B
+joint O4b-EPL_shear-s1-00060A O4b-EPL_shear-s1-00060B
+single O4b-EPL_shear-s1-00061A --prior-events O4b-EPL_shear-s1-00061A O4b-EPL_shear-s1-00061B
+single O4b-EPL_shear-s1-00061B --prior-events O4b-EPL_shear-s1-00061A O4b-EPL_shear-s1-00061B
+single O4b-EPL_shear-s1-00062A --prior-events O4b-EPL_shear-s1-00062A O4b-EPL_shear-s1-00062B
+single O4b-EPL_shear-s1-00062B --prior-events O4b-EPL_shear-s1-00062A O4b-EPL_shear-s1-00062B
+single O4b-EPL_shear-s1-00063A --prior-events O4b-EPL_shear-s1-00063A O4b-EPL_shear-s1-00063B
+single O4b-EPL_shear-s1-00063B --prior-events O4b-EPL_shear-s1-00063A O4b-EPL_shear-s1-00063B
+joint O4b-EPL_shear-s1-00063A O4b-EPL_shear-s1-00063B
+single O4b-EPL_shear-s1-00064A --prior-events O4b-EPL_shear-s1-00064A O4b-EPL_shear-s1-00064B
+single O4b-EPL_shear-s1-00064B --prior-events O4b-EPL_shear-s1-00064A O4b-EPL_shear-s1-00064B
+single O4b-EPL_shear-s1-00065A --prior-events O4b-EPL_shear-s1-00065A O4b-EPL_shear-s1-00065B
+single O4b-EPL_shear-s1-00065B --prior-events O4b-EPL_shear-s1-00065A O4b-EPL_shear-s1-00065B
+single O4b-EPL_shear-s1-00066A --prior-events O4b-EPL_shear-s1-00066A O4b-EPL_shear-s1-00066B
+single O4b-EPL_shear-s1-00066B --prior-events O4b-EPL_shear-s1-00066A O4b-EPL_shear-s1-00066B
+joint O4b-EPL_shear-s1-00066A O4b-EPL_shear-s1-00066B
+single O4b-EPL_shear-s1-00067A --prior-events O4b-EPL_shear-s1-00067A O4b-EPL_shear-s1-00067B
+single O4b-EPL_shear-s1-00067B --prior-events O4b-EPL_shear-s1-00067A O4b-EPL_shear-s1-00067B
+single O4b-EPL_shear-s1-00068A --prior-events O4b-EPL_shear-s1-00068A O4b-EPL_shear-s1-00068B
+single O4b-EPL_shear-s1-00068B --prior-events O4b-EPL_shear-s1-00068A O4b-EPL_shear-s1-00068B
+single O4b-EPL_shear-s1-00069A --prior-events O4b-EPL_shear-s1-00069A O4b-EPL_shear-s1-00069B
+single O4b-EPL_shear-s1-00069B --prior-events O4b-EPL_shear-s1-00069A O4b-EPL_shear-s1-00069B
+joint O4b-EPL_shear-s1-00069A O4b-EPL_shear-s1-00069B
+single O4b-EPL_shear-s1-00070A --prior-events O4b-EPL_shear-s1-00070A O4b-EPL_shear-s1-00070B
+single O4b-EPL_shear-s1-00070B --prior-events O4b-EPL_shear-s1-00070A O4b-EPL_shear-s1-00070B
+single O4b-EPL_shear-s1-00071A --prior-events O4b-EPL_shear-s1-00071A O4b-EPL_shear-s1-00071B
+single O4b-EPL_shear-s1-00071B --prior-events O4b-EPL_shear-s1-00071A O4b-EPL_shear-s1-00071B
+single O4b-EPL_shear-s1-00072A --prior-events O4b-EPL_shear-s1-00072A O4b-EPL_shear-s1-00072B
+single O4b-EPL_shear-s1-00072B --prior-events O4b-EPL_shear-s1-00072A O4b-EPL_shear-s1-00072B
+joint O4b-EPL_shear-s1-00072A O4b-EPL_shear-s1-00072B
+single O4b-EPL_shear-s1-00073A --prior-events O4b-EPL_shear-s1-00073A O4b-EPL_shear-s1-00073B
+single O4b-EPL_shear-s1-00073B --prior-events O4b-EPL_shear-s1-00073A O4b-EPL_shear-s1-00073B
+single O4b-EPL_shear-s1-00074A --prior-events O4b-EPL_shear-s1-00074A O4b-EPL_shear-s1-00074B
+single O4b-EPL_shear-s1-00074B --prior-events O4b-EPL_shear-s1-00074A O4b-EPL_shear-s1-00074B

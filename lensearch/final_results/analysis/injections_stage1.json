@@ -1,0 +1,19 @@
+{
+ "n_pairs": 135,
+ "thresholds": {
+  "max_cat": 11.3877735,
+  "max_pop": 9.886180637661235,
+  "sel_cat": 7.7716866,
+  "sel_pop": 6.52614999079282
+ },
+ "pass_s1": 0.9111111111111111,
+ "frac_max_cat": 0.37037037037037035,
+ "frac_max_pop": 0.6296296296296297,
+ "frac_sel_cat": 0.6888888888888889,
+ "frac_sel_pop": 0.8,
+ "ln_bpop_median": 11.497942773384533,
+ "ln_bcat_true_median": 1.7555869146679033,
+ "ln_bcat_full_median": 10.430080708486486,
+ "ln_bcat_chance_median": 9.803247849430306,
+ "n_true_lens_zero": 28
+}

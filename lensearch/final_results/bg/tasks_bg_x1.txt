@@ -1,0 +1,27 @@
+single BX00-0A --prior-events BX00-0A BX00-0B --injections results/bg/twins_x1.csv --noise-dir data/inject_noise_s1 --nlive 1000 --naccept 60 --outdir results/bg_pe
+single BX00-0B --prior-events BX00-0A BX00-0B --injections results/bg/twins_x1.csv --noise-dir data/inject_noise_s1 --nlive 1000 --naccept 60 --outdir results/bg_pe
+single BX00-1A --prior-events BX00-1A BX00-1B --injections results/bg/twins_x1.csv --noise-dir data/inject_noise_s1 --nlive 1000 --naccept 60 --outdir results/bg_pe
+single BX00-1B --prior-events BX00-1A BX00-1B --injections results/bg/twins_x1.csv --noise-dir data/inject_noise_s1 --nlive 1000 --naccept 60 --outdir results/bg_pe
+single BX00-2A --prior-events BX00-2A BX00-2B --injections results/bg/twins_x1.csv --noise-dir data/inject_noise_s1 --nlive 1000 --naccept 60 --outdir results/bg_pe
+single BX00-2B --prior-events BX00-2A BX00-2B --injections results/bg/twins_x1.csv --noise-dir data/inject_noise_s1 --nlive 1000 --naccept 60 --outdir results/bg_pe
+single BX01-0A --prior-events BX01-0A BX01-0B --injections results/bg/twins_x1.csv --noise-dir data/inject_noise_s1 --nlive 1000 --naccept 60 --outdir results/bg_pe
+single BX01-0B --prior-events BX01-0A BX01-0B --injections results/bg/twins_x1.csv --noise-dir data/inject_noise_s1 --nlive 1000 --naccept 60 --outdir results/bg_pe
+single BX01-1A --prior-events BX01-1A BX01-1B --injections results/bg/twins_x1.csv --noise-dir data/inject_noise_s1 --nlive 1000 --naccept 60 --outdir results/bg_pe
+single BX01-1B --prior-events BX01-1A BX01-1B --injections results/bg/twins_x1.csv --noise-dir data/inject_noise_s1 --nlive 1000 --naccept 60 --outdir results/bg_pe
+single BX01-2A --prior-events BX01-2A BX01-2B --injections results/bg/twins_x1.csv --noise-dir data/inject_noise_s1 --nlive 1000 --naccept 60 --outdir results/bg_pe
+single BX01-2B --prior-events BX01-2A BX01-2B --injections results/bg/twins_x1.csv --noise-dir data/inject_noise_s1 --nlive 1000 --naccept 60 --outdir results/bg_pe
+single BX02-0A --prior-events BX02-0A BX02-0B --injections results/bg/twins_x1.csv --noise-dir data/inject_noise_s1 --nlive 1000 --naccept 60 --outdir results/bg_pe
+single BX02-0B --prior-events BX02-0A BX02-0B --injections results/bg/twins_x1.csv --noise-dir data/inject_noise_s1 --nlive 1000 --naccept 60 --outdir results/bg_pe
+single BX02-1A --prior-events BX02-1A BX02-1B --injections results/bg/twins_x1.csv --noise-dir data/inject_noise_s1 --nlive 1000 --naccept 60 --outdir results/bg_pe
+single BX02-1B --prior-events BX02-1A BX02-1B --injections results/bg/twins_x1.csv --noise-dir data/inject_noise_s1 --nlive 1000 --naccept 60 --outdir results/bg_pe
+single BX02-2A --prior-events BX02-2A BX02-2B --injections results/bg/twins_x1.csv --noise-dir data/inject_noise_s1 --nlive 1000 --naccept 60 --outdir results/bg_pe
+single BX02-2B --prior-events BX02-2A BX02-2B --injections results/bg/twins_x1.csv --noise-dir data/inject_noise_s1 --nlive 1000 --naccept 60 --outdir results/bg_pe
+joint BX00-0A BX00-0B --injections results/bg/twins_x1.csv --noise-dir data/inject_noise_s1 --nlive 1000 --naccept 60 --outdir results/bg_pe
+joint BX00-1A BX00-1B --injections results/bg/twins_x1.csv --noise-dir data/inject_noise_s1 --nlive 1000 --naccept 60 --outdir results/bg_pe
+joint BX00-2A BX00-2B --injections results/bg/twins_x1.csv --noise-dir data/inject_noise_s1 --nlive 1000 --naccept 60 --outdir results/bg_pe
+joint BX01-0A BX01-0B --injections results/bg/twins_x1.csv --noise-dir data/inject_noise_s1 --nlive 1000 --naccept 60 --outdir results/bg_pe
+joint BX01-1A BX01-1B --injections results/bg/twins_x1.csv --noise-dir data/inject_noise_s1 --nlive 1000 --naccept 60 --outdir results/bg_pe
+joint BX01-2A BX01-2B --injections results/bg/twins_x1.csv --noise-dir data/inject_noise_s1 --nlive 1000 --naccept 60 --outdir results/bg_pe
+joint BX02-0A BX02-0B --injections results/bg/twins_x1.csv --noise-dir data/inject_noise_s1 --nlive 1000 --naccept 60 --outdir results/bg_pe
+joint BX02-1A BX02-1B --injections results/bg/twins_x1.csv --noise-dir data/inject_noise_s1 --nlive 1000 --naccept 60 --outdir results/bg_pe
+joint BX02-2A BX02-2B --injections results/bg/twins_x1.csv --noise-dir data/inject_noise_s1 --nlive 1000 --naccept 60 --outdir results/bg_pe

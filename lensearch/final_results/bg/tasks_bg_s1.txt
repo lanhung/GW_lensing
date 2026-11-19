@@ -1,0 +1,144 @@
+single BG00-0A --prior-events BG00-0A BG00-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG00-0B --prior-events BG00-0A BG00-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG01-0A --prior-events BG01-0A BG01-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG01-0B --prior-events BG01-0A BG01-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG02-0A --prior-events BG02-0A BG02-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG02-0B --prior-events BG02-0A BG02-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG03-0A --prior-events BG03-0A BG03-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG03-0B --prior-events BG03-0A BG03-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG04-0A --prior-events BG04-0A BG04-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG04-0B --prior-events BG04-0A BG04-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG05-0A --prior-events BG05-0A BG05-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG05-0B --prior-events BG05-0A BG05-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG06-0A --prior-events BG06-0A BG06-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG06-0B --prior-events BG06-0A BG06-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG06-1A --prior-events BG06-1A BG06-1B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG06-1B --prior-events BG06-1A BG06-1B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG06-2A --prior-events BG06-2A BG06-2B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG06-2B --prior-events BG06-2A BG06-2B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG07-0A --prior-events BG07-0A BG07-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG07-0B --prior-events BG07-0A BG07-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG08-0A --prior-events BG08-0A BG08-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG08-0B --prior-events BG08-0A BG08-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG09-0A --prior-events BG09-0A BG09-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG09-0B --prior-events BG09-0A BG09-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG10-0A --prior-events BG10-0A BG10-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG10-0B --prior-events BG10-0A BG10-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG11-0A --prior-events BG11-0A BG11-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG11-0B --prior-events BG11-0A BG11-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG12-0A --prior-events BG12-0A BG12-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG12-0B --prior-events BG12-0A BG12-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG13-0A --prior-events BG13-0A BG13-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG13-0B --prior-events BG13-0A BG13-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG14-0A --prior-events BG14-0A BG14-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG14-0B --prior-events BG14-0A BG14-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG15-0A --prior-events BG15-0A BG15-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG15-0B --prior-events BG15-0A BG15-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG16-0A --prior-events BG16-0A BG16-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG16-0B --prior-events BG16-0A BG16-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG17-0A --prior-events BG17-0A BG17-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG17-0B --prior-events BG17-0A BG17-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG18-0A --prior-events BG18-0A BG18-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG18-0B --prior-events BG18-0A BG18-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG19-0A --prior-events BG19-0A BG19-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG19-0B --prior-events BG19-0A BG19-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG20-0A --prior-events BG20-0A BG20-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG20-0B --prior-events BG20-0A BG20-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG21-0A --prior-events BG21-0A BG21-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG21-0B --prior-events BG21-0A BG21-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG22-0A --prior-events BG22-0A BG22-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG22-0B --prior-events BG22-0A BG22-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG23-0A --prior-events BG23-0A BG23-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG23-0B --prior-events BG23-0A BG23-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG24-0A --prior-events BG24-0A BG24-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG24-0B --prior-events BG24-0A BG24-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG25-0A --prior-events BG25-0A BG25-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG25-0B --prior-events BG25-0A BG25-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG26-0A --prior-events BG26-0A BG26-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG26-0B --prior-events BG26-0A BG26-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG27-0A --prior-events BG27-0A BG27-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG27-0B --prior-events BG27-0A BG27-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG28-0A --prior-events BG28-0A BG28-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG28-0B --prior-events BG28-0A BG28-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG29-0A --prior-events BG29-0A BG29-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG29-0B --prior-events BG29-0A BG29-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG30-0A --prior-events BG30-0A BG30-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG30-0B --prior-events BG30-0A BG30-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG31-0A --prior-events BG31-0A BG31-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG31-0B --prior-events BG31-0A BG31-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG32-0A --prior-events BG32-0A BG32-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG32-0B --prior-events BG32-0A BG32-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG33-0A --prior-events BG33-0A BG33-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG33-0B --prior-events BG33-0A BG33-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG34-0A --prior-events BG34-0A BG34-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG34-0B --prior-events BG34-0A BG34-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG35-0A --prior-events BG35-0A BG35-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG35-0B --prior-events BG35-0A BG35-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG36-0A --prior-events BG36-0A BG36-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG36-0B --prior-events BG36-0A BG36-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG37-0A --prior-events BG37-0A BG37-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG37-0B --prior-events BG37-0A BG37-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG38-0A --prior-events BG38-0A BG38-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG38-0B --prior-events BG38-0A BG38-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG39-0A --prior-events BG39-0A BG39-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG39-0B --prior-events BG39-0A BG39-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG40-0A --prior-events BG40-0A BG40-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG40-0B --prior-events BG40-0A BG40-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG41-0A --prior-events BG41-0A BG41-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG41-0B --prior-events BG41-0A BG41-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG42-0A --prior-events BG42-0A BG42-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG42-0B --prior-events BG42-0A BG42-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG42-1A --prior-events BG42-1A BG42-1B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG42-1B --prior-events BG42-1A BG42-1B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG42-2A --prior-events BG42-2A BG42-2B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG42-2B --prior-events BG42-2A BG42-2B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG42-3A --prior-events BG42-3A BG42-3B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+single BG42-3B --prior-events BG42-3A BG42-3B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG00-0A BG00-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG01-0A BG01-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG02-0A BG02-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG03-0A BG03-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG04-0A BG04-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG05-0A BG05-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG06-0A BG06-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG06-1A BG06-1B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG06-2A BG06-2B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG07-0A BG07-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG08-0A BG08-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG09-0A BG09-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG10-0A BG10-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG11-0A BG11-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG12-0A BG12-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG13-0A BG13-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG14-0A BG14-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG15-0A BG15-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG16-0A BG16-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG17-0A BG17-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG18-0A BG18-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG19-0A BG19-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG20-0A BG20-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG21-0A BG21-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG22-0A BG22-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG23-0A BG23-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG24-0A BG24-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG25-0A BG25-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG26-0A BG26-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG27-0A BG27-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG28-0A BG28-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG29-0A BG29-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG30-0A BG30-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG31-0A BG31-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG32-0A BG32-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG33-0A BG33-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG34-0A BG34-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG35-0A BG35-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG36-0A BG36-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG37-0A BG37-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG38-0A BG38-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG39-0A BG39-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG40-0A BG40-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG41-0A BG41-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG42-0A BG42-0B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG42-1A BG42-1B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG42-2A BG42-2B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
+joint BG42-3A BG42-3B --injections results/bg/twins_s1.csv --noise-dir data/inject_noise_s1 --nlive 500 --naccept 40 --outdir results/bg_pe
